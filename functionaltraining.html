@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Functional Training Area
+        </title>
+        <style>
+            body 
+            {
+                margin: 0;
+                background-image: url('subbackground.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                color: white;
+                font-family: 'Kanit', Arial;
+                min-height: 100vh; /* Ensure the body is at least the height of the viewport */
+                position: relative; /* Added to make ::before relative to body */
+            }
+            body::before 
+            {
+                content: '';
+                position: fixed; /* Change from absolute to fixed */
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+                z-index: 1;
+                pointer-events: none; /* Ensure the overlay does not block interactions */
+            }
+
+            .content 
+            {
+                position: relative;
+                z-index: 2; /* Ensures content is above the overlay */
+                color: white;
+                padding: 20px;
+            }
+            
+            .title
+            {
+                text-align: center;
+                font-size: 50px;
+            }
+            .description
+            {
+                text-align: center;
+                font-size: 20px;
+            }
+            img
+            {
+                cursor: pointer;
+                border-style: solid;
+                border-color: rgb(50, 51, 53);
+                border-width: 20px;
+                width:100%;
+                max-width: 200px;
+                height:300px;
+                object-fit: contain;
+                margin: 10px;
+                transition: height 0.3s, background-color 0.3s;
+                background-color: rgb(50, 51, 53);
+            }
+            img:active
+            {
+                height:300px;
+                
+            }
+            img:hover
+            {
+                background-color: white;
+                
+            }
+            
+            .image-block
+            {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                
+            }
+            
+            .equipment-name
+            {
+                margin-top: 20px;
+                text-align: center;
+            }
+            #name
+            {
+                font-size:30px;
+                font-weight: bold;
+                
+            }
+            #details
+            {
+                font-size: 23px;
+            }
+            .subdescription
+            {
+                font-size:30px;
+                font-weight: bold;
+            }
+            strong
+            {
+                color:aqua;
+            }
+            .goback
+            {
+                color:white;
+                padding-left: 30px;
+                padding-bottom: 40px;
+                font-size: 25px;
+            }
+            .goback:hover
+            {
+                font-weight: bold;
+            }
+            .goback:active
+            {
+                font-weight: bold;
+                color:rgb(72, 110, 223);
+                transition: color 0.5s;
+            }
+            .bottom
+            {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            .backtotop
+            {
+                color:white;
+                margin-right: 20px;
+                font-size: 25px;
+            }
+            .backtotop:hover
+            {
+                font-weight: bold;
+            }
+            .backtotop:active
+            {
+                font-weight: bold;
+                color:rgb(72, 110, 223);
+                transition: color 0.5s;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="content">
+            <h1 class="title">
+                Functional Training Area
+            </h1>
+            <h2 class="description">
+                The functional training area is designed for exercises that mimic everyday movements and improve overall functional strength.
+            </h2>
+            <br>
+            <p class="description">
+                <span class="subdescription">Target Audience: </span>
+                <br>
+                Great for individuals focused on improving <strong>overall fitness</strong>, <strong>athletic performance</strong>, and <strong>functional strength</strong>.
+            </p>
+            <br>
+            <hr>
+            
+            <div>
+                <h2>
+                    Equipments (click for more informations): 
+                </h2>
+                <div class="image-block">
+                    <img onclick="showName('Kettlebells')" src="functionalarea/kettlebells.png">
+                    <img onclick="showName('Medicine Balls')" src="functionalarea/medicineballs.png">
+                    <img onclick="showName('Battle Ropes')" src="functionalarea/battleropes.png">
+                    <img onclick="showName('TRX Suspension Trainers')" src="functionalarea/trx.png">
+                    <img onclick="showName('Agility Equipment')" src="functionalarea/agility.png">
+                    <br>
+                </div>
+                <div class="equipment-name">
+                    <label id="name" ></label>
+                    <p id="details"></p>
+                </div>
+                <script>
+                    function showName(name) 
+                    {
+                        document.getElementById("name").innerHTML = name;
+    
+                        if (name === 'Kettlebells') 
+                        {
+                            document.getElementById("details").innerHTML = "Kettlebells offer a versatile workout that targets multiple muscle groups simultaneously. They are effective for building strength, improving cardiovascular fitness, and enhancing flexibility and endurance. Kettlebell exercises also promote functional fitness by improving coordination and balance. The dynamic nature of kettlebell training aids in calorie burning and weight management, making them a popular choice for varied and efficient workouts.";
+                        } 
+                        else if(name === 'Medicine Balls')
+                        {
+                            document.getElementById("details").innerHTML = "Medicine balls are used for a range of exercises that enhance strength, power, and coordination. They are effective for improving core stability, increasing explosive strength, and enhancing overall athletic performance. Medicine balls are versatile tools that can be used for dynamic movements, functional training, and rehabilitation, making them valuable for building muscular endurance and improving balance.";
+                        }
+                        else if(name === 'Battle Ropes')
+                        {
+                            document.getElementById("details").innerHTML = "Battle ropes are used for high-intensity, full-body workouts that improve cardiovascular fitness, strength, and endurance. The dynamic, undulating movements of battle ropes engage the upper body, core, and lower body, enhancing muscle tone and explosive power. They are effective for burning calories, boosting metabolism, and increasing overall athletic performance, while also being adaptable for various fitness levels and goals.";
+                        }
+                        else if(name === 'TRX Suspension Trainers')
+                        {
+                            document.getElementById("details").innerHTML = "TRX Suspension Trainers use bodyweight for resistance training, leveraging gravity and the user’s own body weight to build strength, flexibility, and balance. They offer a wide range of exercises that target multiple muscle groups simultaneously, promoting functional fitness and core stability. TRX trainers are versatile and portable, making them suitable for various fitness levels and allowing for effective workouts anywhere.";
+                        }
+                        else if(name === 'Agility Equipment')
+                        {
+                            document.getElementById("details").innerHTML = "Agility equipment is designed to enhance speed, coordination, and quickness through dynamic and interactive exercises. Common items include agility ladders, cones, hurdles, and poles, which are used to perform drills that improve footwork, reaction time, and overall athletic performance. This equipment helps in developing fine motor skills, enhancing balance, and increasing overall agility, making it valuable for athletes in various sports and fitness enthusiasts aiming to boost their performance and physical capabilities.";
+                        }
+                        else 
+                        {
+                            document.getElementById("details").innerHTML = ""; // Clear the description for other equipment
+                        }
+
+                        document.querySelector('.equipment-name').scrollIntoView({ behavior: 'smooth' });
+                    }
+                </script>
+            </div>
+        </div>
+        <div class="bottom">
+            <a class="goback" href="explore.html">&#10558; Go back</a>
+            <a class="backtotop" href="#top">&#8593; Back to Top</a>
+        </div>
+    </body>
+</html>

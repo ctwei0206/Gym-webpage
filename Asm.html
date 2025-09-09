@@ -1,0 +1,347 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiftStruggleGrow</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script> 
+        $(document).ready(function() {
+            $(".overlay-text").fadeIn("slow");
+            $(".cta p").fadeIn(2000);
+            $(".search-bar").fadeIn(3000);
+        });
+    </script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #99C4C8;
+            color: #333;
+        }
+        .header {
+            background-color: #333;
+            padding: 10px 20px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        .header a:hover {
+            text-decoration: underline;
+        }
+        .hero {
+            position: relative;
+            max-width: 100%;
+            height: 70vh; 
+            overflow: hidden; 
+            background-image: url('hero.jpg'); /* Use your image path */
+            background-size: cover; /* Ensures the image covers the entire area */
+            background-position: center; /* Centers the image */
+            background-repeat: no-repeat; /* Prevents the image from repeating */
+            width: 100vw; /* Ensures the container is full width */
+            margin: 0;
+            padding: 0;
+        }
+        .hero img {
+            width: 100%;
+            height: auto; 
+            object-fit: cover; 
+        }
+        .overlay-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            text-align: center;
+            display: none;
+        }
+        .overlay-text h1 {
+            font-size: 4vw;
+            margin: 0;
+            font-weight: bold;
+            color: #ffffff; 
+        }
+        .cta {
+            background-color: #4CBAD7; 
+            color: white;
+            text-align: center;
+            padding: 10px 10px;
+        }
+
+        .cta p {
+            font-size: 1.5vw;
+            margin: 20px 0 20px;
+            display: none;
+        }
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin: 0 auto;
+            max-width: 600px;
+            display: none;
+        }
+        .search-bar input {
+            padding: 10px;
+            font-size: 1vw;
+            width: 70%;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+        }
+        .search-bar button {
+            padding: 10px 20px;
+            font-size: 1vw;
+            background-color: #EB4F58; 
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            font-size: 0.9em; 
+        }
+        .footer .footer-section {
+            flex: 1;
+            margin: 10px;
+            min-width: 200px;
+        }
+        .footer h3 {
+            border-bottom: 2px solid #EB4F58;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1em; 
+        }
+        .footer ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .footer ul li {
+            margin-bottom: 10px;
+        }
+        .footer ul li a {
+            color: white;
+            text-decoration: none;
+        }
+        .footer ul li a:hover {
+            text-decoration: underline;
+        }
+        .footer .social-icons {
+            display: flex;
+            justify-content: flex-start;
+        }
+        .footer .social-icons a {
+            color: white;
+            text-decoration: none;
+            margin-right: 15px;
+            font-size: 1.2em; 
+        }
+        .footer .social-icons a:hover {
+            color: #EB4F58;
+        }
+        .explore-section {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            background-color: #f8f9fa;
+        }
+
+        .explore-section h2 {
+            margin-bottom: 20px;
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .explore-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .explore-item {
+            text-align: center;
+            width: 120px;
+        }
+
+        .explore-item img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            padding: 15px;
+        }
+
+        .explore-item p {
+            margin-top: 10px;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .explore-item img:hover {
+            background-color: #ddd;
+            transition: background-color 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .explore-container {
+                gap: 20px;
+            }
+
+            .explore-item {
+                width: 100px;
+            }
+
+            .explore-item img {
+                width: 80px;
+                height: 80px;
+            }
+
+            .explore-item p {
+                font-size: 1em;
+            }
+        }
+
+        .social-icons {
+            display: flex;
+            flex-direction: column; /* Stack the items vertically */
+            align-items: flex-start; /* Align the items to the start of the container */
+        }
+        .facebook,
+        .instagram {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px; /* Add space between Facebook and Instagram */
+        }
+
+        .namemedia
+        {
+            text-align: center;
+            font-size:15px;
+        }
+        .ig
+        {
+            margin-right: 10px;
+            margin-left:11px;
+        }
+    </style>
+</head> 
+
+<body>
+    <div class="header">
+        <div class="logo">
+            <a href="#">LiftStruggleGrow</a>
+        </div>
+        <nav>
+            <a href="about.html">About</a>
+            <a href="explore.html">Explore Our Gym</a>
+        </nav>
+    </div>
+
+    <div class="hero">
+        
+        <div class="overlay-text">
+            <h1>BE STRONGER THAN YOUR EXCUSES!</h1>
+        </div>
+    </div>
+
+    <div class="cta">
+        <p>Start planning your work out now!</p>
+        <div class="search-bar">
+            
+            <button onclick="redirectToPage()">Start Planning</button>
+        </div>
+    </div>
+
+    <div class="explore-section">
+        <h2>Explore By</h2>
+        <div class="explore-container">
+            <a href="Nutrition.html">
+            <div class="explore-item">
+                <img src="nutrition.jpg" alt="Nutrition Icon">
+                <p>Nutrition</p>
+            </div></a>
+            <div class="explore-item">
+                <a href="sleep.html">
+                    <img src="sleep.jpg" alt="Sleep Icon">
+                    <p>Sleep</p>
+                </a>
+            </div>
+            <div class="explore-item">
+                <a href="mental.html">
+                    <img src="mental.jpg" alt="Mental Health Icon">
+                    <p>Mental Health</p>
+                </a>
+            </div>
+            <div class="explore-item">
+                <a href="https://www.healthline.com/fitness">
+                    <img src="fitness.jpg" alt="Fitness Icon">
+                    <p>Fitness</p>
+                </a>
+            </div>
+            <div class="explore-item">
+                <a href="https://www.badmintonbay.com.my/Others-Equipment/Fitness-equipment-accessories">
+                    <img src="product.png" alt="Product Reviews Icon">
+                    <p>Product</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="footer">
+        <div class="footer-section">
+            <h3>About LiftStruggleGrow</h3>
+            <p>Your journey to a healthier and stronger you starts here. At LiftStruggleGrow, we believe in overcoming challenges and pushing boundaries.</p>
+        </div>
+       
+        <div class="footer-section">
+            <h3>Contact Us</h3>
+            <p>Email: support@liftstrugglegrow.com</p>
+            <p>Phone: +123 456 7890</p>
+            <p>Address: 123 Fitness Street, Workout City, Malaysia</p>
+        </div>
+        <div class="footer-section">
+            <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/share/REpDnxy9kR38JKip/?mibextid=qi2Omg" target="_blank">
+                        <i class="fab fa-facebook"></i>
+                        <div class="facebook">
+                            <img src="fb.png" alt="fb" height="50px">
+                            <p class="namemedia">lifestrugglegrow</p>
+                        </div>
+                    </a>
+                    
+                    <a href="https://www.instagram.com/liftstrugglegrow?igsh=dnFmd24wcHA2YXky" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                        <div class="instagram">
+                            <img class="ig" src="ig.png" alt="ig" height="30px">
+                            <p class="namemedia">lifestrugglegrow</p>
+                        </div>
+                    </a>
+                    
+                    
+                </div>
+    </div>
+    
+<script>
+function redirectToPage() {
+        window.location.href = "Todo.html";
+    }
+</script> 
+</body>
+</html>

@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        <style>
+            body 
+            {
+                margin: 0;
+                background-image: url('subbackground.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                color: white;
+                font-family: 'Kanit', Arial;
+                min-height: 100vh; /* Ensure the body is at least the height of the viewport */
+                position: relative; /* Added to make ::before relative to body */
+            }
+            body::before 
+            {
+                content: '';
+                position: fixed; /* Change from absolute to fixed */
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+                z-index: 1;
+                pointer-events: none; /* Ensure the overlay does not block interactions */
+            }
+
+            .content 
+            {
+                position: relative;
+                z-index: 2; /* Ensures content is above the overlay */
+                color: white;
+                padding: 20px;
+            }
+            .title1
+            {
+                text-align: center;
+                font-size:50px;
+            }
+            .title2
+            {
+                font-weight: 500;
+                font-size:30px;
+                margin-left:20px;
+                margin-bottom:10px;
+            }
+            .subtitle
+            {
+                display:flex;
+                flex-direction:row;
+                justify-content: center;
+                margin-bottom:40px;
+            }
+            .overview
+            {
+                border-style: solid;
+                border-width: 1px;
+                flex:1;
+                text-align:center;
+                padding-top:10px;
+                padding-bottom:10px;
+            }
+            .subname
+            {
+                position: relative;
+                display: inline-block;
+                border-style: solid;
+                border-width: 1px;
+                flex:1;
+                text-align:center;
+                padding-top:10px;
+                padding-bottom:10px;
+                background-color: rgba(89, 85, 85, 0.7);
+                
+            }
+            .subname-list 
+            {
+                max-height: 0; /* Start with max-height at 0 (collapsed) */
+                overflow: hidden; /* Hide content overflow */
+                opacity: 0; /* Start with opacity at 0 (invisible) */
+                transition: max-height 0.5s ease, opacity 0.5s ease; /* Transition over 0.5 seconds */
+                margin-top: 10px;
+                padding-left: 20px;
+                list-style-type: none;
+                padding-right: 15px;
+            }
+
+            .subname:hover .subname-list 
+            {
+                max-height: 500px; /* Expand to fit content (adjust this value as needed) */
+                opacity: 1; /* Fully visible */
+                transition: max-height 0.5s ease, opacity 0.5s ease; /* Slower transition speed */
+            }
+            .subname-list li
+            {
+                transition: font-size 0.5s, font-weight 0.1s;
+            }
+            .subname-list li:active
+            {
+                font-weight: bold;
+               
+            }
+            .subname-list li:hover
+            {
+                font-size: larger;
+                cursor: pointer;
+                color:aqua;
+               
+            }
+            .subname-list li::before
+            {
+                content: '\290D';
+            }
+            .subname:hover .subname-list 
+            {
+                display:block;/* Show the list when hovering over the symbol */
+            }
+            .class
+            {
+                border-style: solid;
+                border-width: 1px;
+                flex:1;
+                text-align:center;
+                padding-top:10px;
+                padding-bottom:10px;
+            }
+            .additional
+            {
+                border-style: solid;
+                border-width: 1px;
+                flex:1;
+                text-align:center;
+                padding-top:10px;
+                padding-bottom:10px;
+            }
+            .wehave
+            {
+                display:flex;
+                flex-direction:row;
+                justify-content: center;
+                margin-bottom:40px;
+                background-color: rgba(89, 85, 85, 0.7);
+            }
+            .subwehave
+            {
+                border-style: solid;
+                border-width: 1px;
+                flex:1;
+                text-align:center;
+                padding-top:10px;
+                padding-bottom:10px;
+            }
+            .subsubwehave
+            {
+                text-align:left;
+                margin-left:30px;
+            }
+            .upcomingevent 
+            {
+                display: flex;
+                flex-wrap: wrap; /* Allow items to wrap to the next line */
+                justify-content: space-between;
+                gap: 10px; /* Add space between images */
+                margin-left: 20px;
+                margin-right: 20px;
+                margin-top: 10px;
+            }
+            .img 
+            {
+                border: solid;
+                border-color: white;
+                transition: width 0.5s;
+            }
+            .img:hover
+            {
+                width:500px;
+                transition:width 0.5s;
+            }
+            .select
+            {
+                cursor: pointer;
+                transition:font-size 0.3s;
+                
+            }
+            .select:hover
+            {
+                font-size:20px;
+                transition:font-size 0.3s;
+            }
+            .test:hover
+            {
+                font-weight: bold;
+                cursor: pointer;
+                font-size:20px;
+            }
+            .test
+            {
+                margin-bottom: 10px; /* Space before image appears */
+            }
+            .area-container 
+            {
+                margin-bottom: 0px; /* Space between areas */
+            }
+            .image-container 
+            {
+                position: relative;
+                width: 100%; /* Adjust width as needed */
+                height: 0; /* Initial height is 0 to hide content */
+                overflow: hidden; /* Hide content overflow */
+                transition: height 1s ease, opacity 1s ease; /* Slower transition of 1 second */
+                opacity: 0; /* Start with opacity at 0 (invisible) */
+            }
+
+            .test:hover + .image-container 
+            {
+                height: 200px; /* Height of the image to display */
+                transition: height 1s ease, opacity 1s ease; /* Slower transition speed */
+                opacity: 1; /* Fully visible */
+            }
+            .image-container img 
+            {
+                width: 100%;
+                height: 100%;
+                object-fit:contain;
+                display: block;
+            }
+            .test:hover + .image-container 
+            {
+                height: 200px; /* Height of the image to display */
+                transition: height 0.5s ease;
+            } ;
+           .image
+            {
+                border-style: solid;
+            }
+            a
+            {
+                color:white;
+                text-decoration: none;
+            }
+            .goback
+            {   position: relative;
+                z-index: 2;
+                font-size: 25px;
+                color:white;
+                padding-left: 30px;
+                padding-bottom: 40px;
+            }
+            .goback:hover
+            {
+                font-weight: bold;
+            }
+            .goback:active
+            {
+                font-weight: bold;
+                color:rgb(72, 110, 223);
+                transition: color 0.5s;
+            }
+            .symbol
+            {
+                font-size: 40px;
+                margin:0px;
+                padding:0px;
+            }
+            .overview-word
+            {
+                margin-bottom:0px;
+                padding-bottom:0px;
+            }
+            .video-container 
+            {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px; /* Optional: Add padding around the video */
+            }
+
+            video 
+            {
+                max-width: 100%; /* Ensure the video scales properly */
+                height: auto; /* Maintain aspect ratio */
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div class="content">
+            <div>
+                <h1 class="title1">
+                    Explore our Gym Page
+                    <hr>
+                </h1>
+            </div>
+            <div>
+                <p class="title2">
+                    Gym Facilities
+                </p>
+            </div>
+            <div class="subtitle">
+                
+                <div class="subname">
+                    <div>
+                        Equipments 
+                    <span class="select">&#8711;</span>
+                    <strong>(Click for more information)</strong>
+                    </div>
+                    <div>
+                        <ul class="subname-list">
+                            <a href="weightlifting.html">
+                                <li> Weightlifting Area</li>
+                            </a>
+                            <a href="cardio.html">
+                                <li> Cardio Area</li>
+                            </a>
+                            <a href="functionaltraining.html">
+                                <li> Functional Training Area</li>
+                            </a>
+                            <a href="groupexercise.html">
+                                <li> Group Exercise Studio</li>
+                            </a>
+                            <a href="personaltrainingarea.html">
+                                <li> Personal Training Area</li>
+                            </a>
+                            <a href="stretching.html">
+                                <li> Stretching and Flexibility Zone</li>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+                
+            </div>
+    
+            <div class="title2">
+                What we have?
+            </div>
+    
+            <div class="wehave">
+                <div class="subwehave">
+                    <div>
+                        Areas
+                        <hr>
+                    </div>
+                    <div>
+                        <div class="area-container">
+                            <div class="test">
+                                &#10551; Weightfting Room
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="areapicture/WeightftingRoom.png">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                &#10551; Cardio Room
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="areapicture/CardioRoom.png">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                &#10551; Functional Training Room
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="areapicture/trainingroom.png">
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="subwehave">
+                    <div>
+                        Basic Facilities
+                        <hr>
+                    </div>
+                    <div>
+                        <div class="area-container">
+                            <div class="test">
+                                &#10551; Shower Pools
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="basicfacilities/showerpool.png">
+                            </div>
+                        </div>
+                        <div class="test">
+                            &#10551; Changing Area
+                        </div>
+                        <div class="image-container">
+                            <img class="image" src="basicfacilities/changingarea.png">
+                        </div>
+                        <div class="test">
+                            &#10551; Locker Rooms
+                        </div>
+                        <div class="image-container">
+                            <img class="image" src="basicfacilities/lockerroom.png">
+                        </div>
+                    </div>
+                </div>
+                <div class="subwehave">
+                    <div>
+                        Lounge Area
+                        <hr>
+                    </div>
+                    <div>
+                        <div class="area-container">
+                            <div class="test">
+                                &#10551; Massages Chair
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="loungearea/massageschair.png">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                &#10551; Tanning Beds
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="loungearea/tanningbed.png">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                &#10551; Saunas
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="loungearea/sauna.png">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="video-container">
+                <video width="80%" height="auto" controls autoplay loop>
+                    <source src="Gym Equipment_ Name and Pictures.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            
+
+            
+
+            <div class="title2">
+                Upcoming Events &#128293;
+            </div>
+            <div class="upcomingevent">
+                <a href ="https://www.facebook.com/share/p/EYQ6ubWk2rDaBGJo/" target="_blank">
+                    <img class="img" src="upcomingevent1.png" width="400px">
+                </a>
+                <a href="https://www.facebook.com/share/hPAdkGDjqhk8CQip/" target="_blank">
+                    <img class="img" src="upcomingevent2.png" width="400px">
+                </a>
+                <a href="https://www.facebook.com/share/p/mgzpTjMDKKhaiadD/" target="_blank">
+                    <img class="img" src="upcomingevent3.png" width="400px">
+                </a>
+            </div>
+        </div>
+        
+        <p>
+            <a class="goback" href="Asm.html">&#10558; Go back</a> 
+        </p>
+
+    </body>
+
+
+</html>

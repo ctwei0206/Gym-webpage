@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="pagestyle_todolist.css">        
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+ <link rel="stylesheet" href="sidebar.css">
+</head>
+<body style="background-color:rgb(43, 39, 39)">
+<div id="myDIV" class="header">
+  <div class="header-content">
+    <h2>Workout To Do List</h2> 
+    
+  </div>
+  <p id="todayDate"></p> 
+  <style>  
+     #todayDate{ 
+       word-spacing:20px; 
+       font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; 
+     }
+  </style> 
+  <div id="InputDiv" style="display:flex"> 
+    <input type="text" id="myInput" placeholder="Your Workout">   
+    <span onclick="newElement()" class="btn">Add</span> 
+
+  </div>
+</div>
+<div class="container">
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="getDuration" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <label for="hours">Hours:</label>
+          <input type="number" id="hours" name="hours" min="0" max="23" placeholder="HH" required>
+          <label for="minutes">Minutes:</label>
+          <input type="number" id="minutes" name="minutes" min="0" max="59" placeholder="MM" required>
+          <button type="submit" class="btn btn-default" data-dismiss="modal">Submit</button>
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+</div>
+
+
+<script>
+  const today = new Date();
+  const options = {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    weekday: 'long'
+  };
+  const formattedDate = today.toLocaleDateString('en-GB', options);
+  const day = today.getDate();
+  const suffix = (day) => {
+    switch (day % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  };
+  dateParagraph=document.getElementById("todayDate")
+  dateParagraph.style.fontFamily="Arial, Helvetica, sans-serif;"
+  document.getElementById("todayDate").innerHTML=formattedDate.replace(/(\d{1,2})/, `$1${suffix(day)}`); 
+</script> 
+<div id="workspace"> 
+  <ul id="myUL"></ul>    
+  <div id="sidebar"> 
+    <div id="timer">
+     <h1 style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;font-weight:bold; ">Time remaining</h1>
+     <div id="timerDisplayer"> 
+       <div id="hoursDisplay" class="grid-item">00</div> 
+       <div id="minutesDisplay" class="grid-item">00</div> 
+       <div id="secondsDisplay" class="grid-item">00</div>
+      </div>
+     </div> 
+     <script>
+    var timerInterval;
+    var secsPara = document.getElementById('secondsDisplay');
+    var minsPara = document.getElementById('minutesDisplay');
+    var hoursPara = document.getElementById('hoursDisplay');
+
+    function formatTime(value) {
+      return value < 10 ? '0' + value : value;
+    }
+
+    function countdownFromTime(seconds) { 
+      // Validate input seconds
+      if (seconds <= 0) {
+        console.error("Invalid countdown time.");
+        return;
+      }
+      
+      // Set initial time
+      var remainingSeconds = seconds; 
+      console.log("remaining seconds: " + remainingSeconds);
+      
+      if (timerInterval) {
+        clearInterval(timerInterval); 
+      }
+      
+      timerInterval = setInterval(function() { 
+        if (remainingSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          secsPara.innerHTML = "00";
+          minsPara.innerHTML = "00";
+          hoursPara.innerHTML = "00";
+          return;
+        }
+        
+        remainingSeconds -= 1;  
+        console.log("Time remaining: " + remainingSeconds); 
+        
+        var secs = remainingSeconds % 60;  
+        var mins = Math.floor(remainingSeconds / 60) % 60; 
+        var hrs = Math.floor(remainingSeconds / 3600);     
+        console.log("secs: " + secs + " mins: " + mins + " hrs: " + hrs);
+        
+        secsPara.innerHTML = formatTime(secs); 
+        minsPara.innerHTML = formatTime(mins);
+        hoursPara.innerHTML = formatTime(hrs); 
+
+      }, 1000);
+    }
+
+    function pauseCountdown() { 
+      if (timerInterval) {
+        clearInterval(timerInterval); 
+        timerInterval = null; 
+      }
+    }
+
+    function resumeCountdown() {  
+      if (remainingSeconds > 0) {
+        countdownFromTime(remainingSeconds);
+      }
+    }
+
+     </script>
+  </div>
+</div>
+<div id="suggestionDiv" class="header">  
+ <input type="text" id="suggestion" class="input" placeholder="Enter your query here" >  
+ <button id="SuggestButton" class="btn">Get suggestions</button>    
+</div>  
+
+
+<script>
+  var myNodelist = document.getElementsByTagName("LI");
+  var taskList=new Map();   
+  var totalTask=taskList.size; 
+
+  for (i = 0; i < myNodelist.length; i++) {
+    var span = document.createElement("SPAN");
+    var txt = document.createTextNode("\u00D7");
+    span.className = "close";
+    span.appendChild(txt);
+    myNodelist[i].appendChild(span);
+  }
+  var close = document.getElementsByClassName("close");
+  for (i = 0; i < close.length; i++) {
+    close[i].onclick = function() {
+      var div = this.parentElement;
+      div.style.display = "none"; 
+      taskList.delete(div,id); 
+    }
+  }
+  var list = document.querySelector('ul'); 
+
+
+  function getTaskDuration(){ 
+    console.log('getTaskDuration called'); 
+     $('getDuration').modal('show');  
+  }
+
+
+  function startSession(li){ 
+    
+  }
+  
+  function addIconToListBar(li){  
+     var iconDiv=document.createElement("div");  
+     iconDiv.className="iconDiv"; 
+
+     var iconDumbbell=document.createElement("img"); 
+     iconDumbbell.src="https://cdn-icons-png.flaticon.com/512/38/38464.png"
+     iconDumbbell.className="icon";  
+     
+     iconDiv.appendChild(iconDumbbell); 
+
+     var iconTimer=document.createElement("img"); 
+     iconTimer.src="https://static-00.iconduck.com/assets.00/timer-icon-2048x2048-l8if4eql.png";
+     iconTimer.className="icon";   
+     iconTimer.onclick=getTaskDuration(); 
+     iconDiv.appendChild(iconTimer);   
+
+     var pauseIcon=document.createElement("img"); 
+     pauseIcon.src="play.png"; 
+     pauseIcon.className="icon"; 
+     iconDiv.appendChild(pauseIcon);  
+     pauseIcon.onclick=function(){
+       let task=taskList.get(li.id); 
+       pauseIcon.onclick = function() {
+        let task = taskList.get(li.id);
+  
+        if (task["paused"] === true) { 
+         console.log("Task Continued")
+         if(task["initiated"]==false){ 
+          countdownFromTime(task["duration"]);  
+          return; 
+        }
+
+        pauseIcon.src = "play.png"; // URL for the play icon
+        task["paused"] = false;  
+        resumeCountdown(); 
+     } else {
+       pauseIcon.src = "pause.png"; // URL for the pause icon
+       task["paused"] = true; 
+       pauseCountdown(); 
+     }
+};
+
+       
+     }
+
+     var stopIcon=document.createElement("img"); 
+     stopIcon.src="https://static.vecteezy.com/system/resources/previews/021/868/700/original/stop-button-icon-web-icon-used-for-videos-and-music-vector.jpg"; 
+     stopIcon.className="icon"; 
+     iconDiv.appendChild(stopIcon); 
+     
+     li.appendChild(iconDiv); 
+     
+  }
+  function newElement() {
+    var li = document.createElement("li");
+    var inputValue = document.getElementById("myInput").value;
+    var t = document.createTextNode(`${inputValue}`);
+    li.appendChild(t);
+    if (inputValue == '') {
+      alert("You must write something!");
+      return; 
+    } else {
+      document.getElementById("myUL").appendChild(li);
+    } 
+    document.getElementById("myInput").value = ""; 
+    var spanClose = document.createElement("SPAN"); 
+    spanClose.className = "close";   
+    var txt = document.createTextNode("\u00D7");
+    spanClose.appendChild(txt);
+    li.appendChild(spanClose); 
+    li.id=taskList.size; 
+    var spanTimer= document.createElement("SPAN"); 
+    spanTimer.className="timer";    
+    spanTimer.onclick=getTaskDuration(); 
+    
+    document.getElementById("myUL").appendChild(li); 
+    spanClose.onclick = function() {
+      var div = this.parentElement;
+      div.style.display = "none";
+    };
+    addIconToListBar(li);  
+    var listInfo={
+      "name":t,  
+      "duration":3700, 
+      "paused":true,
+      "initiated":false,
+      "dateCreated":new Date() 
+    }  
+    taskList.set(li.id,listInfo); 
+    
+  } 
+</script>
+
+</body>
+</html>

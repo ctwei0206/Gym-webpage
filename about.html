@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        
+        <style>
+            body
+            {
+                margin:0px;
+                background-image: url('BodyFitTraining.jpg');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                color:white;
+                font-family: 'Kanit',Arial;
+            }
+            body::before 
+            {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+                z-index: 1;
+                pointer-events: none; 
+            }
+            .content 
+            {
+                position: relative;
+                z-index: 2; /* Ensures content is above the overlay */
+                color: white;
+                padding: 20px;
+            }
+            .title1
+            {
+                text-align: left;
+                font-size:50px;
+            }
+            .title2
+            {   color: #44f58e;
+                font: weight 500px;
+                font-size:35px;
+                margin-left:20px;
+                margin-bottom:10px;
+            }
+            .subtitle
+            {   color: #fbff00e5;
+                font-size:30px;
+                display:flex;
+                flex-direction:row;
+                justify-content: left;
+                margin-bottom:20px;
+            }
+            .overview
+            {   color: #78f1fa;
+                flex:1;
+                text-align:justify;
+                font-size: 20px;
+                padding-left:30px;
+                padding-bottom:10px;
+            }
+            .subname
+            {
+                position: relative;
+                display: inline-block;
+                border-style: solid;
+                border-width: 1px;
+                flex:1;
+                text-align:center;
+                padding-top:10px;
+                padding-bottom:10px;
+                
+            }
+            .subname-list 
+            {
+                display: none; /* Hide the list by default */
+                margin-top: 10px;
+                padding-left: 20px;
+                list-style-type: none;
+                padding-right:15px;
+                
+            }
+            .subname-list li
+            {
+                transition: font-size 0.5s, font-weight 0.1s;
+            }
+            .subname-list li:active
+            {
+                font-weight: bold;
+               
+            }
+            .subname-list li:hover
+            {
+                font-size: larger;
+                cursor: pointer;
+               
+            }
+            .subname-list li::before
+            {
+                content: '\290D';
+            }
+            .subname:hover .subname-list 
+            {
+                display:block;/* Show the list when hovering over the symbol */
+            }
+            .class
+            {
+                border-style: solid;
+                border-width: 1px;
+                flex:1;
+                text-align:center;
+                padding-top:10px;
+                padding-bottom:10px;
+            }
+            .additional
+            {
+                border-style: solid;
+                border-width: 1px;
+                flex:1;
+                text-align:center;
+                padding-top:10px;
+                padding-bottom:10px;
+            }
+            .wehave
+            {
+                display:flex;
+                flex-direction:column;
+                justify-content: center;
+                margin-bottom:40px;
+            }
+            .subwehave
+            {   font-size: 25px;
+                border-style: solid;
+                border-width: 1px;
+                flex:1;
+                text-align:center;
+                padding-top:10px;
+                padding-bottom:10px;
+            }
+            .subsubwehave
+            {
+                text-align:left;
+                margin-left:30px;
+            }
+            .upcomingevent
+            {
+                display:flex;
+                flex-direction:row;
+                justify-content:space-between;
+                margin-left:20px;
+                margin-right:20px;
+                margin-top:10px;
+            }
+            .img
+            {
+                border:solid;
+                border-color: white;
+                transition:width 0.5s;
+            }
+            .img:hover
+            {
+                width:500px;
+                transition:width 0.5s;
+            }
+            .select
+            {
+                cursor: pointer;
+                transition:font-size 0.3s;
+                
+            }
+            .select:hover
+            {
+                font-size:20px;
+                transition:font-size 0.3s;
+            }
+            .test:hover
+            {
+                font-weight: bold;
+                cursor: pointer;
+                font-size:20px;
+            }
+            .test
+            {
+                margin-bottom: 10px; /* Space before image appears */
+            }
+            .area-container 
+            {
+                margin-bottom: 0px; /* Space between areas */
+            }
+            .image-container 
+            {
+                position: relative;
+                width: 100%; /* Adjust width as needed */
+                height: 0;
+                overflow: hidden;
+                transition: height 0.3s ease; /* Smooth transition effect */
+            }
+            .image-container img 
+            {
+                width: 100%;
+                height: 100%;
+                object-fit:contain;
+                display: block;
+            }
+            .test:hover + .image-container 
+            {
+                height: 200px; /* Height of the image to display */
+                transition: height 0.5s ease;
+            } ;
+           .image
+            {
+                border-style: solid;
+            }
+            a
+            {
+                color:white;
+                text-decoration: none;
+            }
+            .goback
+            
+            {   position: relative;
+                z-index: 2;
+                font-size: 25px;
+                color:white;
+                padding-left: 30px;
+                padding-bottom: 40px;
+            }
+            .goback:hover
+            {
+                font-weight: bold;
+            }
+            .goback:active
+            {
+                font-weight: bold;
+                color:rgb(85, 127, 255);
+                transition: color 0.5s;
+            }
+            .goforward
+            {   position: relative;
+                z-index: 2;
+                font-size: 25px;
+                color:rgb(255, 94, 0);
+                padding-left: 30px;
+                padding-bottom: 40px;
+            }
+            .goforward:hover
+            {
+                font-weight: bold;
+            }
+            .goforward:active
+            {   
+                font-weight: bold;
+                color:rgb(72, 110, 223);
+                transition: color 0.5s;
+            }
+            .symbol
+            {
+                font-size: 40px;
+                margin:0px;
+                padding:0px;
+            }
+            .overview-word
+            {
+                margin-bottom:0px;
+                padding-bottom:0px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="content">
+            <div>
+                <h1 class="title1">
+                    Things About This Gym
+                    <hr>
+                </h1>
+            </div>
+            <div>
+                <p class="title2">
+                    Why We Need to Work Out
+                </p>
+            </div>
+            <div class="subtitle">
+                <div class="overview">
+                    <p class="overview-word">
+                        The idea that physical activity is crucial for maintaining health is not new. Hippocrates, the ancient Greek physician, already recognized the risks associated with insufficient exercise and excessive food consumption. Similarly, Tai chi, a form of graceful movement exercise from China, dates back to the 12th century B.C., and yoga's origins in India are even older.
+                        While many of these are observational and can only show correlations (e.g., people who exercise tend to be healthier) rather than direct causation, statistical adjustments suggest a strong link between exercise and health. Additionally, results from randomized clinical trials, which are generally considered stronger evidence of causality, support the notion that exercise contributes to better health.
+                        The volume and scope of research on exercise are notable, especially given the wide range of health conditions it appears to prevent, alleviate, or delay.
+                        The American Heart Association established the first exercise guidelines in the U.S. in 1972, reflecting this understanding. Exercise benefits heart health by strengthening the heart so it beats more efficiently, improving arterial elasticity, and increasing levels of "good" HDL cholesterol.
+                        It is also well-known that physical activity can help prevent diabetes. Active muscles become more sensitive to insulin, which helps regulate blood sugar levels, making it less likely for blood sugar to rise in individuals who are fit.
+                    </p>
+                </div>
+
+            </div>
+            <div>  
+             <p class="title2">
+             General Categories of Gym Work Outs
+            </p>
+            </div>
+            <div class="subtitle">
+            
+                Cardio  
+                <div class="overview">
+                    <p class="overview-word">
+                        Cardio exercise, which is sometimes referred to as aerobic exercise, is any rhythmic activity that raises your heart rate into your target heart rate zone—such as boxing drills on a punching bag. This is the zone where you burn the most fat and calories.
+                    </p>
+                </div>
+               
+            </div>
+            <div class="subtitle">
+            
+                Weight <br>Training
+                  <div class="overview">
+                      <p class="overview-word">
+                        Weight training is a type of exercise that uses free weights to build strength. Weightlifting is sometimes incorporated into aerobic exercises to elevate the heart rate for a powerful cardio workout as well. To decrease the risk of injury, beginners should start by lifting lighter weights and gradually work their way up to lifting heavy weights.
+                      </p>
+                  </div>
+                 
+              </div>
+            <div class="subtitle">
+        
+                Functional <br>Training
+                  <div class="overview">
+                      <p class="overview-word">
+                        Functional exercises help you perform everyday activities and tend to use movement patterns that mimic how you naturally move. Whats more, functional fitness workouts can be squeezed into your schedule anywhere, anytime, and using any equipment. Whether you prefer calisthenics (bodyweight exercises) or cranking up the resistance with some of the best adjustable dumbbells or resistance bands, functional strength training can help you achieve those muscle gains and improve your cardio, too.                      
+                      
+                      </p>
+                  </div>
+                 
+              </div>
+            <div class="subtitle">
+            
+                Stretching <br>and <br> Flexibility
+                  <div class="overview">
+                      <p class="overview-word">
+                        Flexibility exercise is one of the four types of exercise along with strength, balance and endurance. Ideally, a healthy workout routine would include all four types of exercise. Flexibility exercises stretch your muscles and can help your body move and bend easier. These exercises may not improve your endurance or strength, but being flexible gives you more freedom of movement for other exercise as well as for everyday activities. 
+                        It may also help you avoid discomfort when confined in a space for a long period of time, such as a long meeting or a plane flight.                     
+                    </p>
+                  </div>
+                 
+              </div>
+            <div class="title2">
+                What are some of the recommended work outs??
+            </div>
+    
+            <div class="wehave">
+                <div class="subwehave">
+                    <div>
+                        Cardio
+                        <hr>
+                    </div>
+                    <div>
+                        <div class="area-container">
+                            <div class="test">
+                                Rowing Machine
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="cardioworkout/rowingmachine.webp">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                Step Mill
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="cardioworkout/stepmill.jpeg">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                Cycle Sprints
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="cardioworkout/cyclesprint.jpg">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                Jumping Jacks
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="cardioworkout/jumpingjack.jpg">
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="subwehave">
+                    <div>
+                        Weight Training
+                        <hr>
+                    </div>
+                    <div>
+                        <div class="area-container">
+                            <div class="test">
+                                 Chest Press
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="weighttraining/chestpress.avif">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                 Leg Press
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="weighttraining/legpress.jpg">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                 Shoulder Press
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="weighttraining/shoulderpress.jpg">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                                <div class="test">
+                                   Bicep Arm Curl
+                                </div>
+                                <div class="image-container">
+                                    <img class="image" src="weighttraining/biceparmcurl.webp">
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                </div>
+                <div class="subwehave">
+                    <div>
+                        Functional Training 
+                        <hr>
+                    </div>
+                    <div>
+                        <div class="area-container">
+                            <div class="test">
+                               Body Weight Squat
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="functionaltraining/bodyweightsquat.jpg">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                Inchworm
+                             </div>
+                            <div class="image-container">
+                                 <img class="image" src="functionaltraining/inchworm.webp">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                 Mountain Climber
+                            </div>
+                             <div class="image-container">
+                                 <img class="image" src="functionaltraining/mountainclimber.jpg">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                 Elbow Side Plank (left and right)
+                            </div>
+                             <div class="image-container">
+                                 <img class="image" src="functionaltraining/elbowsideplank.png">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="subwehave">
+                    <div>
+                        Stretching and Flexibility
+                        <hr>
+                    </div>
+                    <div>
+                        <div class="area-container">
+                            <div class="test">
+                                Seated Forward Bend
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="stretchingandflex/seatforwardbend.webp">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                Lying Twist
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="stretchingandflex/lyingtwist.jpg">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                Standing Side Bend
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="stretchingandflex/standingsidebend.jpeg">
+                            </div>
+                        </div>
+                        <div class="area-container">
+                            <div class="test">
+                                Cat-Cow Pose
+                            </div>
+                            <div class="image-container">
+                                <img class="image" src="stretchingandflex/cat-cowpose.png">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            
+        </div>
+        
+        <p>
+            <a class="goforward" href="extrainfo.html"> THERES MORE!! &#8599&#8599</a> 
+        </p>
+        <p>
+            <a class="goback" href="Asm.html">&#10558; Go back</a> 
+        </p>
+    </body>
+
+
+</html>

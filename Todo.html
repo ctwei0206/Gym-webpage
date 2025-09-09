@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <link rel="stylesheet" href="pagestyle_todolist.css">        
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+ <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+ 
+ <link rel="stylesheet" href="sidebar.css">
+</head>
+<body style="background-color:rgb(43, 39, 39)">
+<div id="myDIV" class="header">
+  
+  <div class="header-content">
+    <h2>Workout To Do List</h2> 
+    
+  </div>
+  <p id="todayDate"></p> 
+  <style>  
+     #todayDate{ 
+       word-spacing:20px; 
+       font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; 
+     }
+  </style> 
+  <div id="InputDiv" style="display:flex"> 
+    <input type="text" id="myInput" placeholder="Your Workout">   
+    <span onclick="newElement()" class="btn">Add</span> 
+
+  </div>
+</div>
+<div class="container">
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="getDuration" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" id="duration-form-head"></h4>
+        </div>
+        <div class="modal-body">
+          <label for="hours">Hours:</label>
+          <input type="number" id="hours" name="hours" min="0" max="11" placeholder="HH" required>
+          <label for="minutes">Minutes:</label>
+          <input type="number" id="minutes" name="minutes" min="0" max="59" placeholder="MM" required>
+          <label for="seconds">Seconds:</label>
+          <input type="number" id="seconds" name="seconds" min="0" max="59" placeholder="SS" required> 
+          <button type="submit" class="btn btn-default" id='durationFormButton' data-dismiss="modal">Submit</button>  
+          <style>
+            h4{
+              font-size:16px; 
+              word-spacing:4px; 
+            }
+          </style>
+          <script>
+            function displayTaskInfoOnForm(task_id){ 
+              var tInfo = taskList.get(task_id);
+            if (tInfo) {
+             document.getElementById('duration-form-head').innerHTML = "How long would you like to perform: " + tInfo["name"] + "?";
+            } else {
+            console.error("Task information not found for the given task_id:", task_id);
+            }
+            
+             var button=document.getElementById('durationFormButton'); 
+             button.addEventListener('click',function(){
+               var task=taskList.get(task_id);  
+               var seconds=parseInt(document.getElementById('seconds').value); 
+               var minutes=parseInt(document.getElementById('minutes').value); 
+               var hours=parseInt(document.getElementById('hours').value); 
+               console.log(seconds+" "+minutes+" "+hours); 
+               task["duration"]= seconds + (minutes*60) + (hours*3600);
+               console.log("Task duration: "+task["duration"]);  
+             }) 
+            }
+          </script>
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+ 
+</div>
+
+<script>
+  const today = new Date();
+  const options = {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    weekday: 'long'
+  };
+  const formattedDate = today.toLocaleDateString('en-GB', options);
+  const day = today.getDate();
+  const suffix = (day) => {
+    switch (day % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  };
+  dateParagraph=document.getElementById("todayDate")
+  dateParagraph.style.fontFamily="Arial, Helvetica, sans-serif;"
+  document.getElementById("todayDate").innerHTML=formattedDate.replace(/(\d{1,2})/, `$1${suffix(day)}`); 
+</script> 
+<div id="workspace"> 
+  <ul id="myUL"></ul>    
+  <div id="sidebar">  
+
+    <div id="timer">
+     <h1 style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; ">Time remaining</h1> 
+     <div id="timerDisplayer"> 
+       <div id="hoursDisplay" class="grid-item">00</div> 
+       <div id="minutesDisplay" class="grid-item">00</div> 
+       <div id="secondsDisplay" class="grid-item">00</div>
+      </div>
+     </div>  
+     
+     <script>
+    var timerInterval;
+
+    var secsPara = document.getElementById('secondsDisplay');
+    var minsPara = document.getElementById('minutesDisplay');
+    var hoursPara = document.getElementById('hoursDisplay');  
+    timerDisplaying=false; 
+
+    function isnullTimer(){ 
+      return Boolean(timerInterval); 
+    }
+    function formatTime(value) {
+      return value < 10 ? '0' + value : value;
+    }
+    function displayTaskDuration(totalSecs){
+      if(!timerDisplaying){
+        document.getElementById('secondsDisplay').innerHTML=formatTime(totalSecs%60);  
+        document.getElementById('minutesDisplay').innerHTML=formatTime(Math.floor((totalSecs%3600)/60)); 
+        document.getElementById('hoursDisplay').innerHTML=formatTime(Math.floor(totalSecs/3600)); 
+        return true; 
+      }
+      return false; 
+    }
+    function clearTimerDisplay(){ 
+      secsPara.innerHTML="00"; 
+      minsPara.innerHTML="00"; 
+      hoursPara.innerHTML="00";  
+      timerDisplaying=false; 
+    }
+    function countdownFromTime(seconds) { 
+      // Validate input seconds
+      if (seconds <= 0) {
+        console.error("Invalid countdown time.");
+        return;
+      }
+      
+      // Set initial time
+      var remainingSeconds = seconds; 
+      console.log("remaining seconds: " + remainingSeconds);
+      
+      if (timerInterval) {
+        clearInterval(timerInterval); 
+      }
+      
+      timerInterval = setInterval(function() { 
+        if (remainingSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          secsPara.innerHTML = "00";
+          minsPara.innerHTML = "00";
+          hoursPara.innerHTML = "00";
+          return;
+        }
+        
+        remainingSeconds -= 1;  
+        console.log("Time remaining: " + remainingSeconds); 
+        
+        var secs = remainingSeconds % 60;  
+        var mins = Math.floor(remainingSeconds / 60) % 60; 
+        var hrs = Math.floor(remainingSeconds / 3600);     
+        console.log("secs: " + secs + " mins: " + mins + " hrs: " + hrs);
+        
+        secsPara.innerHTML = formatTime(secs); 
+        minsPara.innerHTML = formatTime(mins);
+        hoursPara.innerHTML = formatTime(hrs); 
+
+      }, 1000);
+    }
+
+    function pauseCountdown() { 
+      if (timerInterval) {
+        clearInterval(timerInterval); 
+        timerInterval = null; 
+      }
+    }
+
+    function resumeCountdown() {  
+      var seconds=parseInt(document.getElementById("secondsDisplay").innerHTML); 
+      var minutes=parseInt(document.getElementById("minutesDisplay").innerHTML); 
+      var hours=parseInt(document.getElementById("hoursDisplay").innerHTML);  
+      remainingSeconds=seconds+minutes*60+hours*3600; 
+      console.log(remainingSeconds); 
+      if (remainingSeconds > 0) {
+        countdownFromTime(seconds+minutes*60+hours*3600); 
+      }
+    }
+
+    function stopCountdown(){ 
+     if(timerInterval){
+      clearInterval(timerInterval); 
+      timerInterval=null;   
+     } 
+     console.log("Stop countdown called."); 
+     remainingSeconds=0; 
+     secsPara.innerHTML="00";  
+     minsPara.innerHTML="00"; 
+     hoursPara.innerHTML="00";
+      
+    }
+     </script>
+  </div>
+</div>
+<div id="suggestionDiv" class="header">  
+ <input type="text" id="suggestion" class="input" placeholder="Enter your query here" >  
+ <button id="SuggestButton" class="btn" >Get suggestions</button>    
+</div>  
+<script type="importmap">
+  {
+    "imports": {
+      "@google/generative-ai": "https://esm.run/@google/generative-ai"
+    }
+  }
+</script>
+
+<script type="module">
+    import { GoogleGenerativeAI } from "@google/generative-ai";
+
+    // Fetch your API_KEY
+    const API_KEY = "AIzaSyCge9wv2e39BWjI4-cX22Fs4coXg1Yv24U";
+
+    // Access your API key (see "Set up your API key" above)
+    const genAI = new GoogleGenerativeAI(API_KEY);
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+    
+    async function run(prompt) {
+      console.log(prompt); 
+      prompt+="Give it in csv form: workout,duration. You are not allowed to give further elaborations nor introductions. Just go straight to the point and give me the list."; 
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      console.log(text); 
+    }  
+
+    document.getElementById("SuggestButton").addEventListener('click', () => {
+            const prompt = document.getElementById("suggestion").value; // Get the current value of the input field
+            run(prompt);  
+            var workoutList=prompt.split('\n');  
+            console.log(workoutList); 
+    });
+
+</script>
+<script>
+  var myNodelist = document.getElementsByTagName("LI");
+  var taskList=new Map();   
+  var totalTask=taskList.size; 
+
+  for (i = 0; i < myNodelist.length; i++) {
+    var span = document.createElement("SPAN");
+    var txt = document.createTextNode("\u00D7");
+    span.className = "close";
+    span.appendChild(txt);
+    myNodelist[i].appendChild(span);
+  } 
+
+  var list = document.querySelector('ul'); 
+
+
+  function getTaskDuration(task_id){ 
+     console.log('getTaskDuration called');  
+     displayTaskInfoOnForm(task_id); 
+     $('#getDuration').modal('show');
+    
+  }
+
+
+  function startSession(li){ 
+    
+  }
+  function editItem(element) {
+    const currentText = element.innerText;
+
+// Create an input element with Bootstrap's 'form-control' class
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = currentText;
+  input.className = 'form-control';
+
+// Store the original text node
+  const displayText = element.childNodes[0];
+
+// Replace the text node with the input element
+  element.replaceChild(input, displayText);
+  input.focus();
+
+  input.addEventListener('blur', function() {
+  // Revert back to the original text if the user clicks outside
+  element.replaceChild(displayText, input);
+  });
+
+ input.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    // Update the text node with the new value and replace the input with the text
+    displayText.nodeValue = input.value;
+    element.replaceChild(displayText, input);
+  }
+});
+        }
+  function addIconToListBar(li){  
+     var iconDiv=document.createElement("div");  
+     iconDiv.className="iconDiv"; 
+
+     var iconTimer=document.createElement("img"); 
+     iconTimer.src="timer-icon.png"; 
+     iconTimer.className="icon";    
+     iconTimer.addEventListener('click',function(){
+        getTaskDuration(li.id);  
+
+     })
+     iconDiv.appendChild(iconTimer);   
+
+     var pauseIcon=document.createElement("img"); 
+     pauseIcon.src="play.png"; 
+     pauseIcon.className="icon"; 
+     iconDiv.appendChild(pauseIcon);  
+     pauseIcon.onclick=function(){
+       let task=taskList.get(li.id); 
+       pauseIcon.onclick = function() {
+        pauseIcon.src="play.png"; 
+        let task = taskList.get(li.id);
+      
+        if (task["paused"] === true) { 
+         console.log("Task Continued")
+         if(task["initiated"]==false){ 
+          countdownFromTime(task["duration"]);  
+          task['initiated']=true; 
+          return; 
+         } 
+
+         task["paused"] = false;  
+         resumeCountdown();  
+        
+
+     } else {
+       pauseIcon.src = "pause.png"; // URL for the pause icon
+       task["paused"] = true; 
+       console.log("task paused")
+       pauseCountdown(); 
+     } 
+     event.stopImmediatePropagation();
+};
+
+       
+     }
+
+     var stopIcon=document.createElement("img"); 
+     stopIcon.src="https://static.vecteezy.com/system/resources/previews/021/868/700/original/stop-button-icon-web-icon-used-for-videos-and-music-vector.jpg"; 
+     stopIcon.className="icon"; 
+     iconDiv.appendChild(stopIcon); 
+     
+     li.appendChild(iconDiv); 
+     
+  }
+  function newElement() {
+    var li = document.createElement("li");
+var inputValue = document.getElementById("myInput").value;
+var taskName = document.createTextNode(`${inputValue}`);
+
+li.appendChild(taskName);
+
+if (inputValue == '') {
+    alert("You must write something!");
+    return; 
+} else {
+    document.getElementById("myUL").appendChild(li);
+} 
+
+document.getElementById("myInput").value = ""; 
+
+var spanClose = document.createElement("SPAN"); 
+spanClose.className = "close";   
+var txt = document.createTextNode("\u00D7");
+spanClose.appendChild(txt);
+li.appendChild(spanClose); 
+li.id = taskList.size; 
+
+document.getElementById("myUL").appendChild(li); 
+
+spanClose.onclick = function() {
+    var div = this.parentElement;
+    div.style.display = "none";
+    console.log("Countdown is stopping and the task will be deleted."); 
+    stopCountdown();  
+    taskList.delete(div.id); 
+};
+
+addIconToListBar(li);  
+
+// Use nodeValue to get the text content
+console.log("Task name added: " + inputValue);
+
+var taskInfo = {
+    "name": inputValue,  
+    "duration": 900, 
+    "paused": true,
+    "initiated": false,
+    "dateCreated": new Date() 
+};
+console.log("taskInf0['name']: "+taskInfo["name"])
+li.tabIndex = 0;
+// Add event listener for click
+ li.addEventListener('click', (event) => {
+    // Focus the li element when clicked
+    li.focus(); 
+
+    // Check if the timer is null and handle task duration
+    if (!isnullTimer()) {
+        if (displayTaskDuration(taskInfo["duration"])) {
+            console.log("Displayed Task Duration: "+taskInfo["duration"]);
+        } else {
+            clearTimerDisplay();
+        }
+    } else {
+        console.log("Timer is active. Meaning that there is an activity ongoing.");
+    }
+
+    // Prevent other listeners from executing
+    event.stopImmediatePropagation(); 
+ });
+
+// Add event listener for blur
+ li.addEventListener('blur', (event) => {
+    // Clear time display when focus is lost
+    clearTimerDisplay(); 
+
+    // Prevent other listeners from executing
+    event.stopImmediatePropagation(); 
+  });
+
+  
+  taskList.set(li.id,taskInfo);  
+
+  
+  li.addEventListener('dblclick',function(){ 
+    editItem(li);  
+    event.stopImmediatePropagation(); 
+  })
+  } 
+</script>
+
+</body>
+</html>
