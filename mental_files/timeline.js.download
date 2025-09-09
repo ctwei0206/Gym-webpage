@@ -1,0 +1,148 @@
+// SAMHSA - Applies to custom 988 timeline at /find-help/988/lifeline-timeline
+/* eslint-disable max-nested-callbacks */
+(function ($, Drupal) {
+  Drupal.behaviors.timeline = {
+    attach(context) {
+      $(once("timeline", "html", context).forEach(() => {
+        (($) => {
+          /**
+           * Manages visibility and animations of timeline items based on scroll position and focus events.
+           */
+          function timelineHideShowOnScroll() {
+            // VISUALLY HIDE TIMELINE CARDS ON LOAD EXCEPT CARD 01
+            $(".timeline-list-wrapper .timeline-item").addClass("visually-hidden");
+            $(".timeline-list-wrapper .timeline-item .timeline-icon-wrapper").addClass(
+              "animate__animated animate__slow"
+            );
+            $(".timeline-list-wrapper .timeline-item .timeline-item-wrapper").addClass(
+              "animate__animated animate__slow"
+            );
+            $(".item01").removeClass("visually-hidden").addClass("animate__fadeIn");
+
+            // APPLY SCROLL FUNCTIONS AT CALCULATED SCROLL POINTS
+
+            let $lastScrollTop = 0;
+
+            $(window).scroll(() => {
+              const $this = $(this).scrollTop();
+              const scrollTop = $(this).scrollTop();
+              if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+                $(".timeline-list-wrapper .timeline-item").removeClass(
+                  "visually-hidden"
+                );
+                $(".timeline-list-wrapper .timeline-item")
+                  .find(".timeline-icon-wrapper")
+                  .removeClass("animate__fadeOut")
+                  .removeClass("animate__fadeIn");
+                $(".timeline-list-wrapper .timeline-item")
+                  .find(".timeline-item-wrapper")
+                  .removeClass("animate__fadeOut")
+                  .removeClass("animate__fadeIn");
+              } else if (scrollTop <= 0) {
+                $(".timeline-list-wrapper .timeline-item")
+                  .not(".item01")
+                  .addClass("visually-hidden");
+                $(".timeline-list-wrapper .timeline-item")
+                  .find(".timeline-icon-wrapper")
+                  .removeClass("animate__fadeOut")
+                  .removeClass("animate__fadeIn");
+                $(".timeline-list-wrapper .timeline-item")
+                  .find(".timeline-item-wrapper")
+                  .removeClass("animate__fadeOut")
+                  .removeClass("animate__fadeIn");
+              } else {
+                // SHOW ITEMS ON SCROLL DOWN
+                if ($this > $lastScrollTop) {
+                  const $offset = $(".timeline-list-wrapper .timeline-item")
+                    .not(".visually-hidden")
+                    .last()
+                    .offset().top;
+
+                  if ($this > $offset - 200) {
+                    const $nexthidden = $(
+                      ".timeline-list-wrapper .timeline-item.visually-hidden:first"
+                    );
+
+                    $($nexthidden).removeClass("visually-hidden");
+                    $($nexthidden)
+                      .find(".timeline-icon-wrapper")
+                      .removeClass("animate__fadeOut")
+                      .addClass("animate__fadeIn");
+                    $($nexthidden)
+                      .find(".timeline-item-wrapper")
+                      .removeClass("animate__fadeOut")
+                      .addClass("animate__fadeIn");
+                  }
+                  // HIDE ITEMS ON SCROLL UP
+                } else {
+                  const $offset = $(".timeline-list-wrapper .timeline-item")
+                    .not(".visually-hidden")
+                    .last()
+                    .offset().top;
+
+                  if ($this < $offset - 200) {
+                    const $hidethisone = $(".timeline-list-wrapper .timeline-item")
+                      .not(".item01")
+                      .not(".visually-hidden")
+                      .last();
+
+                    $($hidethisone)
+                      .find(".timeline-icon-wrapper")
+                      .removeClass("animate__fadeIn")
+                      .addClass("animate__fadeOut");
+                    $($hidethisone)
+                      .find(".timeline-item-wrapper")
+                      .removeClass("animate__fadeIn")
+                      .addClass("animate__fadeOut");
+                    setTimeout(() => {
+                      $($hidethisone).addClass("visually-hidden");
+                    }, 500);
+                  }
+                }
+
+                $lastScrollTop = $this;
+              }
+
+              // HIDE SCROLL ARROW AT BOTTOM OF TIMELINE / SHOW OTHERWISE
+              if (
+                !$(".timeline-list-wrapper .timeline-item").hasClass("visually-hidden")
+              ) {
+                $(".timeline-scroll-arrow").hide();
+              } else {
+                $(".timeline-scroll-arrow").show();
+              }
+            });
+
+            // HIDE/SHOW CARDS ON FOCUS
+            $(".timeline-item").each((i, el) => {
+              $(el).focus(() => {
+                $(el).removeClass("visually-hidden");
+                $(el)
+                  .find(".timeline-icon-wrapper")
+                  .addClass("animate__animated animate__slow animate__fadeIn");
+                $(el)
+                  .find(".timeline-item-wrapper")
+                  .addClass("animate__animated animate__slow animate__fadeIn");
+              });
+            });
+          }
+
+          // ONLY RUN TIMELINE HIDE/SHOW ON SCROLL FUNCTION IF PAGE HAS A TIMELINE ".timeline-list-wrapper"
+          $(() => {
+            // SET TIMELINE AS A VARIABLE
+            const $timelinelist = $(".timeline-list-wrapper");
+
+            // IS THERE A TIMELINE ON THIS PAGE
+            if ($timelinelist.length) {
+              // FORCE TIMELINE HEIGHT AND KEEP IT DURING SCROLL
+              const $timelineHeight = $timelinelist.outerHeight();
+              $(".timeline-list-wrapper").css("height", `${$timelineHeight}px`);
+              // RUN TIMELINE HIDE/SHOW FUNCTION
+              timelineHideShowOnScroll();
+            }
+          });
+        })(jQuery);
+      }));
+    },
+  };
+})(jQuery, Drupal);

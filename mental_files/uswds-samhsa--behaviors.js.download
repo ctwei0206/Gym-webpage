@@ -1,0 +1,19 @@
+// SAMHSA - legacy behaviors file
+(function ($, Drupal) {
+  Drupal.behaviors.practicionerLocator = {
+    attach(context) {
+      $(once("practicionerLocator", "html", context).forEach(() => {
+        (($) => {
+          // eslint-disable-next-line max-nested-callbacks
+          $(document).ready(() => {
+            if (window.location.pathname === "/medication-assisted-treatment/find-treatment/treatment-practitioner-locator") {
+              if ($("#edit-reset").length !== 0) {
+                $("html, body").scrollTop($("#results_area").offset().top);
+              }
+            }
+          });
+        })(jQuery);
+      }));
+    },
+  };
+})(jQuery, Drupal);

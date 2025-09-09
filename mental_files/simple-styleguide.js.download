@@ -1,0 +1,128 @@
+// SAMHSA - for our internal styleguide at /simple-styleguide
+(function ($, Drupal) {
+  Drupal.behaviors.styleguide = {
+    attach(context) {
+      $(once("styleguide", "html", context).forEach(() => {
+        (($) => {
+          $(".sg-style-wrapper.custom:first").removeClass("hidden");
+          $(".sg-sidenav .usa-sidenav__item")
+            .first()
+            .addClass("menu-item--active-trail");
+
+          // eslint-disable-next-line max-nested-callbacks
+          $(".sg-nav-item").click((event) => {
+            //event.preventDefault();
+            const hash = $(event.target).attr("href");
+            window.history.pushState(null, null, hash);
+            $(".sg-style-wrapper").addClass("hidden");
+            $(hash).removeClass("hidden");
+            $(".sg-sidenav .usa-sidenav__item").removeClass("menu-item--active-trail");
+            $(".sg-sidenav .usa-sidenav__item.usa-sidenav__outline").addClass(
+              "menu-item--active-trail"
+            );
+          });
+        })(jQuery);
+      }));
+    },
+  };
+})(jQuery, Drupal);
+
+(function ($, Drupal) {
+  Drupal.behaviors.styleguideSideMenuBar = {
+    attach: function () {
+      // Add tabindex attribute to side menu button for 508 compliance
+      $('.side-menu-button-container .side-menu-button').attr('tabindex', '0');
+
+      $('.side-menu-button').click(function () {
+        $(this).find('svg').toggleClass('fa-bars fa-times');
+        let ariaExpanded = $(this).attr('aria-expanded') === 'true' ? 'false' : 'true';
+        $(this).attr('aria-expanded', ariaExpanded);
+        $('.side-menu-container .side-menu--mobile').toggleClass('open');
+      });
+
+      $('.side-menu-container .side-menu--mobile a').click(function () {
+        $('.side-menu-container .side-menu--mobile').removeClass('open');
+        $('.side-menu-button').find('svg').toggleClass('fa-bars fa-times');
+        $('.side-menu-button').attr('aria-expanded', 'false');
+      });
+    },
+  };
+})(jQuery, Drupal);
+
+if (window.location.href.includes("/simple-styleguide")) {
+  (function ($, Drupal) {
+    Drupal.behaviors.styleguideMobileMenu = {
+      attach: function (context, settings) {
+        (($) => {
+          new Mmenu('#mmenu', {
+            'theme': 'white',
+            'dragOpen': false,
+            'slidingSubmenus': true,
+            'extensions': [
+                'pagedim-black',
+                'fx-menu-slide',
+                'pageshadow',
+                'effect-zoom-menu',
+                'effect-zoom-panels'
+            ],
+
+            'pageScroll': {
+                'scroll': true,
+                'update': true
+            },
+
+            'offCanvas': {
+                'position': 'right-front',
+                'clone': true,
+                'screenReader': {
+                  'closeMenu': 'Close menu',
+                  'openMenu': 'Open menu',
+                  'toggleSubmenu': 'Toggle submenu',
+                  'aria': true ,
+                  'text': true
+                },
+            },
+
+            'classNames': {
+                'selected': 'is-active'
+            },
+
+            'setSelected': {
+                'current': 'detect',
+                'hover': true,
+                'parent': false
+            },
+
+            'navbars': [
+              {
+                'position': 'top',
+                'use': true,
+                'content': [
+                    'prev',
+                    'title',
+                    'close'
+                ]
+              }
+            ],
+            'navbar': {
+                'add': true,
+                'title': '<a href="https://www.samhsa.gov/">Home</a>',
+                'titleLink': 'parent'
+              },
+
+            'keyboardNavigation' : {
+                'enable'	: true,
+                'enhance'	: true
+            },
+
+            'onClick': {
+                'close': false,
+                'preventDefault': true,
+                'setSelected'   : true
+              }
+          });
+        })(jQuery);
+      }
+    };
+  })(jQuery, Drupal);
+}

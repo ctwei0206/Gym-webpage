@@ -1,0 +1,63 @@
+/*
+jQuery.once has been deprecated. Replaced by a new once library
+https://www.drupal.org/node/3158256
+
+A lot of wiring has gone into core to continue to support legacy jQuery.once implementations
+But going forward, implementations should follow the new structure. There are several examples in the page listed above.
+Below is one of the recommended implementations.
+ */
+((Drupal, $, once) => {
+  Drupal.behaviors.timelineComponent = {
+    attach(context) {
+      $(
+        once("timelineComponent", "html", context).forEach(() => {
+          // START CODE
+
+          // Add timeline-list-wrapper class to Timeline group to initialize Timeline styling
+          $(".block-inline-blocktimeline-group").addClass(
+            "timeline-list-wrapper"
+          );
+
+          // Add "odd" "even" classes to the the timeline items.
+          let iterator = 1;
+          $(".timeline-list-wrapper").each((i, el) => {
+            $(el)
+              .find("li.timeline-item")
+              // eslint-disable-next-line max-nested-callbacks
+              .each((ind, ele) => {
+                if (iterator === 1) {
+                  $(ele).addClass("odd");
+                } else {
+                  $(ele).addClass("even");
+                }
+                iterator *= -1;
+              });
+          });
+
+          // Add item01 to first list item and item02, item03 etc. to additional list items in timeline group
+          $(
+            "div.timeline-list-wrapper div div article div:last-child li.timeline-item"
+          ).addClass((index) => {
+            return `item0${index + 1}`;
+          });
+
+          $("li.item01")
+            .removeClass("visually-hidden")
+            .addClass("animate__fadeIn");
+
+          // Wrap content within ul to add timeline marker styling
+          $(".timeline-list-wrapper div.block-content").wrapAll(
+            '<ul class="timeline-list item-list alternate marker-center"></ul>'
+          );
+
+          // Add Arrow during transition
+          $(".block-inline-blocktimeline-group").append(
+            '<div class="timeline-scroll-arrow" style=""><svg class="svg-inline--fa fa-arrow-circle-down" aria-hidden="true" aria-labelledby="svg-inline--fa-title-liQ2T2ctXvG2" data-prefix="fas" data-icon="arrow-circle-down" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><title id="svg-inline--fa-title-liQ2T2ctXvG2">Scroll down to present next timeline card.</title><path fill="currentColor" d="M256 0C114.6 0 0 114.6 0 256S114.6 512 256 512s256-114.6 256-256S397.4 0 256 0zM127 297c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l71 71L232 120c0-13.3 10.7-24 24-24s24 10.7 24 24l0 214.1 71-71c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9L273 409c-9.4 9.4-24.6 9.4-33.9 0L127 297z"></path></svg><!-- <i class="fas fa-arrow-circle-down" aria-hidden="true" title="Scroll down to present next timeline card."></i> --></div>'
+          );
+
+          // END CODE
+        })
+      );
+    },
+  };
+})(Drupal, jQuery, once);

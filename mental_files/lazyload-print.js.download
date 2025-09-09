@@ -1,0 +1,16 @@
+(function (Drupal) {
+  Drupal.behaviors.printLazyLoadFix = {
+    attach: function () {
+      window.onbeforeprint = function () {
+        const lazyImages = document.querySelectorAll('img.lazyload');
+        lazyImages.forEach(function (img) {
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+          }
+          img.loading = 'eager';
+          img.classList.replace('lazyload', 'lazyloaded');
+        });
+      };
+    }
+  };
+})(Drupal, drupalSettings);

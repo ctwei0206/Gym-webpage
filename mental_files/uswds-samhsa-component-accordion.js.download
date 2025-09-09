@@ -1,0 +1,99 @@
+/*
+ * USWDS - COMPONENTS - ACCORDION
+ */
+// Accordion expandAll/collapseAll functionality
+(function ($, Drupal) {
+  Drupal.behaviors.accordion = {
+    attach: function () {
+      (($) => {
+        $(".usa-accordion").each((i, el) => {
+          $(el)
+            .find(".usa-accordion-expandall")
+            // eslint-disable-next-line max-nested-callbacks
+            .click((event) => {
+              event.preventDefault();
+              $(event.target)
+                .parent()
+                .parent()
+                .parent()
+                .children(".usa-accordion_panel_wrapper")
+                .children(".usa-accordion__content")
+                .removeAttr("hidden");
+              $(event.target)
+                .parent()
+                .parent()
+                .parent()
+                .children(".usa-accordion_panel_wrapper")
+                .children(".usa-accordion__heading")
+                .children(".usa-accordion__button")
+                .attr("aria-expanded", true);
+            });
+          $(el)
+            .find(".usa-accordion-collapse-all")
+            // eslint-disable-next-line max-nested-callbacks
+            .click((event) => {
+              event.preventDefault();
+              $(event.target)
+                .parent()
+                .parent()
+                .parent()
+                .children(".usa-accordion_panel_wrapper")
+                .children(".usa-accordion__content")
+                .attr("hidden", true);
+              $(event.target)
+                .parent()
+                .parent()
+                .parent()
+                .children(".usa-accordion_panel_wrapper")
+                .children(".usa-accordion__heading")
+                .children(".usa-accordion__button")
+                .attr("aria-expanded", false);
+            });
+        });
+
+        // ADD MICRODATA DECLARITIVE TO CONTENT WRAPPER IF ACCORDION IS PRESENT
+        if ($("div.usa-accordion.usa-accordion-faq").length) {
+          $("#main-layout")
+            .attr("itemscope", "")
+            .attr("itemtype", "https://schema.org/FAQPage");
+        }
+
+        if (document.referrer.indexOf("https://search.usa.gov") > -1) {
+          $(".usa-accordion__content").not(".usa-banner .usa-accordion__content").removeAttr("hidden");
+          $(".usa-accordion__button").not(".usa-banner .usa-accordion__button").attr("aria-expanded", true);
+        }
+
+        $("a").click((event) => {
+          const searchID = $(event.currentTarget).attr("id");
+          // doing this to avoid a js error when the search icon is clicked on mobile.
+          if (searchID !== "search-toggle") {
+            if ($(event.target).attr("href") !== undefined && $(event.target).attr("href").split("#")[1]) {
+              const anchorID = $(event.target).attr("href").split("#")[1];
+              $(`#${anchorID}`)
+                .parent(".usa-accordion_panel_wrapper")
+                .children(".usa-accordion__content")
+                .attr("hidden", false);
+              $(`#${anchorID}`)
+                .children(".usa-accordion__button")
+                .attr("aria-expanded", true);
+            }
+          }
+        });
+
+        if (window.location.hash) {
+          const hashID = window.location.hash.substring(0);
+          $(hashID)
+            .parent(".usa-accordion_panel_wrapper")
+            .children(".usa-accordion__content")
+            .attr("hidden", false);
+          $(hashID).children(".usa-accordion__button").attr("aria-expanded", true);
+        }
+
+        $("td[data-label='field_view_awards_link'] a").click(() => {
+          $("#awards-tab").trigger("click");
+        });
+
+      })(jQuery);
+    },
+  };
+})(jQuery, Drupal);

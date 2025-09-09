@@ -1,0 +1,55 @@
+/*
+ * USWDS - COMPONENTS - CARD
+ */
+/* eslint-disable max-nested-callbacks */
+(function ($, Drupal) {
+  Drupal.behaviors.cardComponent = {
+    attach(context) {
+      $(once("cardComponent", "html", context).forEach(() => {
+        (($) => {
+          $(document).ready(() => {
+            $(`.usa-card[class*="grid-col-12"]`).addClass("usa-card-one-col");
+            $(`.usa-card[class*="grid-col-6"]`)
+              .removeClass("usa-card-one-col")
+              .addClass("usa-card-two-col");
+            $(`.usa-card[class*="grid-col-4"]`)
+              .removeClass("usa-card-one-col")
+              .addClass("usa-card-three-col");
+
+            $(".usa-card__container .usa-card__img a").each((i, el) => {
+              $(el).attr("href", $(el).attr("href").replace("internal:", ""));
+            });
+
+            $(".usa-card__container .usa-card__footer a").each((i, el) => {
+              $(el).attr("href", $(el).attr("href").replace("internal:", ""));
+            });
+
+            $(`.usa-card__container .usa-card__img a[href^="http://"],
+              .usa-card__container .usa-card__img a[href^="https://"]`)
+              .not(
+                `.usa-card__container .usa-card__img a[href*="${window.location.hostname}"]`
+              )
+              .attr("target", "_blank");
+            $(`.usa-card__container .usa-card__footer a[href^="http://"],
+              .usa-card__container .usa-card__footer a[href^="https://"]`)
+              .not(
+                `.usa-card__container .usa-card__footer a[href*="${window.location.hostname}"]`
+              )
+              .attr("target", "_blank");
+          });
+          $(".usa-card__container .youtube-container .youtube-field-player").each(
+            (i, el) => {
+              setTimeout(() => {
+                $(el).attr(
+                  "title",
+                  (index, value) => `YouTube video titled '${value || ""}'`
+                );
+              }, 1500);
+              $(el).removeAttr("aria-label");
+            }
+          );
+        })(jQuery);
+      }));
+    },
+  };
+})(jQuery, Drupal);

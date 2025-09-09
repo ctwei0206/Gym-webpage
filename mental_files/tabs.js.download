@@ -1,0 +1,75 @@
+(function ($, Drupal) {
+  Drupal.behaviors.tabs = {
+    attach: function () {
+      (($) => {
+        $('.custom-tab').each(function () {
+          const tabbed = $(this);
+          const tablist = tabbed.find('.tab-list');
+          const tabs = tablist.find('[role="tab"]');
+          const panels = tabbed.find('[role="tabpanel"]');
+
+          // The tab switching function
+          const switchTab = (oldTab, newTab) => {
+            newTab.focus();
+            // Make the active tab focusable by the user (Tab key)
+            newTab.removeAttr('tabindex');
+
+            // Set the selected state
+            newTab.attr('aria-selected', 'true');
+            oldTab.removeAttr('aria-selected');
+            oldTab.attr('tabindex', '-1');
+
+            // tab panels to show and hide
+            const index = tabs.index(newTab);
+            const oldIndex = tabs.index(oldTab);
+            panels.eq(oldIndex).prop('hidden', true);
+            panels.eq(index).prop('hidden', false);
+          };
+
+          tabs.each((i, tab) => {
+            $(tab).attr('tabindex', '-1');
+
+            // Handle clicking of tabs for mouse users
+            // eslint-disable-next-line max-nested-callbacks
+            $(tab).on('click', e => {
+              e.preventDefault();
+              const currentTab = tablist.find('[aria-selected="true"]');
+              if (e.currentTarget !== currentTab[0]) {
+                switchTab(currentTab, $(tab));
+              }
+            });
+
+            // Handle keydown events for keyboard users
+            // eslint-disable-next-line max-nested-callbacks
+            $(tab).on('keydown', e => {
+              const index = tabs.index(tab);
+
+              const dir = e.which === 37 ? index - 1 : e.which === 39 ? index + 1 : e.which === 40 ? 'down' : null;
+              if (dir !== null) {
+                if (dir === 'down') {
+                  panels.eq(index).find(':focusable').first().focus();
+                } else if (tabs.eq(dir)) {
+                  switchTab($(tab), tabs.eq(dir));
+                }
+              }
+            });
+          });
+
+          // Add tab panel semantics and hide them all
+          panels.each((i, panel) => {
+            $(panel).prop('hidden', true);
+            $(panel).attr('tabindex', "0");
+          });
+
+          // Initially activate the first tab and reveal the first tab panel
+          tabs.eq(0).removeAttr('tabindex');
+          tabs.eq(0).attr('aria-selected', 'true');
+          panels.eq(0).prop('hidden', false);
+        });
+
+
+
+      })(jQuery);
+    },
+  };
+})(jQuery, Drupal);

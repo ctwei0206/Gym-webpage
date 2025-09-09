@@ -1,0 +1,75 @@
+(function (Drupal, $, once) {
+  Drupal.behaviors.samhsaLbCustom = {
+    attach(context) {
+      /**
+       * We only run this code once on the initial page lood.
+       * Note that this is the new way of doing this. As of Drupal 9.3, the jquery.once library has been removed from core. Backwards compatibility has been engineered in, but eventually it"ll be deprecated and removed, so from this point on, we should adopt the new way of doing this.
+       * https://www.drupal.org/node/3158256
+       *
+       * Note not just the "once" first line of code below, but the "once" declarations at the start and end of this script.
+       */
+
+      // THIS FILE IS BEING LOADED GLOBALLY FROM THE samhsa_uswds_base.libraries.yml FILE.
+
+      $(once("samhsaLbCustom", "html", context).forEach(() => {
+        // START SINGLE RUN CODE
+
+        if ($('form.node-generic-lb-layout-builder-form').length) {
+          $('div.layout-builder__add-block ul').prepend('<li>Add a Block --></li>');
+          $('body').addClass('is-admin');
+        }
+
+        // Insert Card component as a pullout
+        $('.lb-pullout-src').each(function () {
+          let classes = $(this).attr('class').split(' ');
+          for (let i = 0; i < classes.length; i++) {
+            if (classes[i].substr(0, 15) === 'lb-pullout-src-') {
+              // const sourceClass = '.lb-pullout-src-' + classes[i].substr(15);
+              const source = $('.' + classes[i]);
+              const destination = $('.lb-pullout-dest-' + classes[i].substr(15));
+              const sourceHtml = source.wrap('<p/>').parent().html();
+              destination.prepend(sourceHtml);
+              source.remove();
+            }
+          }
+        });
+
+        // Make all buttons in buttons component the same width
+        $(".lego-button-group").each(function () {
+          if ($(this).find("a.button").is(":visible")) {
+            let maxWidth = 0;
+
+            /* eslint-disable max-nested-callbacks */
+            let cpntButtonMaxWidth = 0;
+            $(this).find(".lego-button-group-button a.button").each(function () {
+              $(this).each(function () {
+                const itemWidth = $(this).outerWidth(true);
+                maxWidth = Math.max(cpntButtonMaxWidth, itemWidth);
+                if (maxWidth > cpntButtonMaxWidth) {
+                  cpntButtonMaxWidth = maxWidth;
+                }
+              });
+            });
+            /* eslint-enable max-nested-callbacks */
+            $(this).find(".lego-button-group-button a.button").width(cpntButtonMaxWidth);
+          }
+        });
+
+
+        // END SINGLE RUN CODE
+      }));
+
+      // This code is outside the "once" handler so it can run in the Layout Builder modals
+      // This parses terms select lists with "compound" terms (term||label), stripping out the value and showing just the label.
+      $('.form-item-settings-block-form-field-cpnt-media-type select option').each(function () {
+        const label = $(this).html();
+        if (~label.indexOf("||")) {
+          const labelParts = $(this).html().split('||');
+          $(this).html(labelParts[1]);
+        }
+      });
+
+    },
+  };
+}(Drupal, jQuery, once));
+

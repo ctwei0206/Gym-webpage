@@ -1,0 +1,213 @@
+(function (Drupal, $, once) {
+  Drupal.behaviors.samhsaJsonldBuilder = {
+    attach(context) {
+      /**
+       * We only run this code once on the initial page lood.
+       * Note that this is the new way of doing this. As of Drupal 9.3, the jquery.once library has been removed from core. Backwards compatibility has been engineered in, but eventually it"ll be deprecated and removed, so from this point on, we should adopt the new way of doing this.
+       * https://www.drupal.org/node/3158256
+       *
+       * Note not just the "once" first line of code below, but the "once" declarations at the start and end of this script.
+       *
+       * In this first block of code we pull in the data passed from the backend, pass it to the buildJsonLd function where most of the magic happens, then we embed the results into the head of the page.
+       */
+
+      // Descriptions in the JSON output will be truncated to these many words. If necessary.
+      const truncateThreshold = 200;
+
+      $(once("samhsaJsonldBuilder", "html", context).forEach(() => {
+        // READ IN DATA PASSED FROM THE BACKEND
+        // These are used when the JSON-LD values are defined in custom fields
+        const jsonldType = drupalSettings.samhsa_jsonld.jsonldType;
+        // This is used when the custom fields are passing JQuery targets
+        const jsonldDomTargets = drupalSettings.samhsa_jsonld.jsonldDomTargets;
+        // This is used when the custom fields are passing content
+        const jsonldFieldContent = drupalSettings.samhsa_jsonld.jsonldFieldContent;
+
+        // This is used when we're using default content type values. Defined in an array in the samhsa_jsonld.module file.
+        const jsonldDefaultValues = drupalSettings.samhsa_jsonld.jsonldDefaultValues;
+
+        // This is used when we're using View values. Defined in a custom UI.
+        const jsonldViewValues = drupalSettings.samhsa_jsonld.jsonldViewValues;
+
+        // Build the appropriate JSON-LD script and embed it.
+        // JSON defined in custom fields
+        if (jsonldDomTargets !== undefined && jsonldDomTargets.length) {
+          const output = buildJsonLd(jsonldType, jsonldDomTargets);
+          document.head.appendChild(output);
+          return;
+        } else if (jsonldFieldContent !== undefined && jsonldFieldContent.length) {
+          const output = buildJsonLd(jsonldType, jsonldFieldContent);
+          document.head.appendChild(output);
+          return;
+        } else if (jsonldDefaultValues !== undefined && jsonldDefaultValues.length) {
+          // JSON generated automatically
+          const output = buildJsonLd("default", jsonldDefaultValues);
+          document.head.appendChild(output);
+          return;
+        } else if (jsonldViewValues !== undefined && jsonldViewValues.length) {
+          // JSON defined in Custom Views UI
+          const output = buildJsonLd("view", jsonldViewValues);
+          document.head.appendChild(output);
+        }
+      }));
+
+      /**
+       *
+       * @param {string} pageType - "WebPage", "FAQPage", "default", "view"
+       *   "default" means that hardcoded config for an entire content type is being used.
+       * @param {Array} jsonldData - JQuery identifier strings or outright values for the JSON-LD (depending on pageType
+       * @returns {HTMLScriptElement}
+       *
+       * Generates the JSON-LD script.
+       */
+      function buildJsonLd(pageType, jsonldData) {
+        // Compile the content with jQuery
+        let items = {};
+        let structuredData;
+        if (pageType === "FAQPage") {
+          // Build an object of JSON keys and their jQuery targets
+          const domElements = samhsaParseJsonldTargets(jsonldData);
+          let items = [];
+          // Using the jQuery identifiers collected above, build an array of objects, one for each faq, containing the JSON keys and their corresponding content.
+          $(domElements.wrapper).each(function () {
+            const obj = {
+              question: $(this).find(domElements.question).text().trim(),
+              answer: $(this).find(domElements.answer).text().trim(),
+            };
+            items.push(obj);
+          });
+
+          // Build the JSON data.
+          structuredData = {
+            "@context": "https://schema.org/",
+            "@type": pageType,
+            "@description": "Find answers to the most frequently asked questions about SAMHSA and the SAMHSA.gov website.",
+            "mainEntity": [],
+          };
+
+          // Loop through the FAQ objects. Adding their data to the JSON
+          for (let i = 0; i < items.length; i++) {
+            structuredData.mainEntity.push({
+              "@type": "Question",
+              "name": items[i].question,
+              "AcceptedAnswer": {
+                "@type": "Answer",
+                "text": items[i].answer,
+              },
+            });
+          }
+        } else if (pageType === "WebPage") {
+          // Compile the content for the JSON-LD
+          if (jsonldData[0].includes('||')) {
+            // Build and object of JSON content
+            const jsonContent = samhsaParseJsonldTargets(jsonldData);
+            for (const key in jsonContent) {
+              if (jsonContent.hasOwnProperty(key)) {
+                items[key] = jsonContent[key];
+              }
+            }
+          } else {
+            // Build and object of JSON keys and their jQuery targets
+            const domTargets = samhsaParseJsonldTargets(jsonldData);
+            for (const key in domTargets) {
+              if (domTargets.hasOwnProperty(key)) {
+                items[key] = $(domTargets[key]).text().trim();
+              }
+            }
+          }
+
+          // Build the JSON data.
+          // WebPage DOES NOT have multiple content elements like FAQ.
+          structuredData = {
+            "@context": "https://schema.org/",
+            "@type": pageType,
+            "name": items.name,
+            "description": truncate(items.description, truncateThreshold),
+            "publisher": {
+              "@type": "GovernmentOrganization",
+              "name": "Substance Abuse and Mental Health Services Administration",
+            },
+          };
+        } else if (pageType === "default") {
+          for (let i = 0; i < jsonldData.length; i++) {
+            items[jsonldData[i][0]] = jsonldData[i][1];
+          }
+
+          // Build the JSON data.
+          structuredData = {
+            "@context": "https://schema.org/",
+            "@type": "WebPage",
+            "name": items.name,
+            "description": truncate(items.description, truncateThreshold),
+            "publisher": {
+              "@type": "GovernmentOrganization",
+              "name": "Substance Abuse and Mental Health Services Administration",
+            },
+          };
+        } else if (pageType === "view") {
+          for (let i = 0; i < jsonldData.length; i++) {
+            items[jsonldData[i][0]] = jsonldData[i][1];
+          }
+
+          // Build the JSON data.
+          structuredData = {
+            "@context": "https://schema.org/",
+            "@type": "WebPage",
+            "name": items.name,
+            "description": items.description,
+            "publisher": {
+              "@type": "GovernmentOrganization",
+              "name": "Substance Abuse and Mental Health Services Administration",
+            },
+          };
+        }
+
+        // Put the JSON data into JSON-LD script form and return it
+        const jsonldScript = document.createElement("script");
+        jsonldScript.setAttribute("type", "application/ld+json");
+
+        jsonldScript.textContent = JSON.stringify(structuredData);
+        return jsonldScript;
+      }
+
+      /**
+       *
+       * @param {string} jsonldTargetsKeyvalue - "key|value"
+       * @returns {{}}
+       *
+       * Converts the strings passed from the backend into an Object.
+       */
+      function samhsaParseJsonldTargets(jsonldTargetsKeyvalue) {
+        let items = {};
+        let limit = '|';
+        for (let i = 0; i < jsonldTargetsKeyvalue.length; i++) {
+          if (jsonldTargetsKeyvalue[i].includes('||')) {
+            limit = '||';
+          }
+          const parts = jsonldTargetsKeyvalue[i].split(limit);
+          items[parts[0]] = parts[1];
+        }
+        return items;
+      }
+
+      /**
+       *
+       * @param {string} str - The original content
+       * @param {number} threshold - The number of allowed words
+       * @returns {*}
+       *
+       * Truncates large blocks of text, always breaking on words.
+       */
+      function truncate(str, threshold) {
+        if (str !== undefined) {
+          let output = str.split(" ").splice(0, threshold).join(" ");
+          if (output.length < str.length) {
+            output += "...";
+          }
+          return output;
+        }
+
+      }
+    },
+  };
+}(Drupal, jQuery, once));

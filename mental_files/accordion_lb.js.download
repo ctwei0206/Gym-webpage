@@ -1,0 +1,173 @@
+/*
+jQuery.once has been deprecated. Replaced by a new once library
+https://www.drupal.org/node/3158256
+
+A lot of wiring has gone into core to continue to support legacy jQuery.once implementations
+But going forward, implementations should follow the new structure. There are several examples in the page listed above.
+Below is one of the recommended implementations.
+ */
+((Drupal, $, once) => {
+  Drupal.behaviors.accordionComponent = {
+    attach(context) {
+      $(once("accordionComponent", "html", context).forEach(() => {
+        // START SINGLE RUN CODE
+
+        $(".usa-accordion__heading.lego-accordion").click(function open() {
+          const parentAccordionGroup = $(this)
+            .parent()
+            .parent()
+            .parent()
+            .parent();
+
+          // Open this accordion. Close all others. Unless "Expand All" is active
+          const expandAll = parentAccordionGroup
+            .find(
+              ".usa-accordion_expandcollapse.text-right a.usa-accordion-expandall"
+            )
+            .hasClass("active");
+          if (!expandAll) {
+            // If the accordion is closed, first close all then open the one clicked.
+            if ($(this).find("button").attr("aria-expanded") === "false") {
+              parentAccordionGroup
+                .find(".usa-accordion__button.lego-accordion")
+                .attr("aria-expanded", "false");
+              parentAccordionGroup
+                .find(".usa-accordion__content.lego-accordion.active")
+                .hide()
+                .removeClass("active");
+              $(this).attr("aria-expanded", "true");
+              $(this)
+                .parent()
+                .parent()
+                .find(".usa-accordion__content.lego-accordion")
+                .addClass("active")
+                .show();
+            } else {
+              // The accordion is open. Close in on click
+              $(this).attr("aria-expanded", "false");
+              $(this)
+                .parent()
+                .parent()
+                .find(".usa-accordion__content.lego-accordion")
+                .removeClass("active")
+                .hide();
+            }
+          } else if (
+            $(this).find("button").attr("aria-expanded") === "false"
+          ) {
+            $(this).attr("aria-expanded", "true");
+            $(this)
+              .parent()
+              .parent()
+              .find(".usa-accordion__content.lego-accordion")
+              .addClass("active")
+              .show();
+          } else {
+            $(this).attr("aria-expanded", "false");
+            $(this)
+              .parent()
+              .parent()
+              .find(".usa-accordion__content.lego-accordion")
+              .removeClass("active")
+              .hide();
+            const openAccordions = parentAccordionGroup.find(
+              ".usa-accordion__content.lego-accordion.active"
+            ).length;
+
+            // On the last closed accordion remove the active class from the "expand all" button.
+            // This will return accordions to their default behavior
+            if (openAccordions === 0) {
+              parentAccordionGroup
+                .find(
+                  ".usa-accordion_expandcollapse.text-right a.usa-accordion-expandall"
+                )
+                .removeClass("active");
+            }
+          }
+        });
+
+        // Expand/Collapse All
+        $(".usa-accordion_expandcollapse.text-right").each((i, el) => {
+          $(el)
+            .find("a.usa-accordion-expandall")
+            // eslint-disable-next-line max-nested-callbacks
+            .click((event) => {
+              event.preventDefault();
+              const parentAccordionGroup = $(event.target).parent().parent();
+
+              // Add this class to facilitate closing 1 at a time
+              $(this).addClass("active");
+
+              // Open all accordion content at once
+              parentAccordionGroup
+                .find(".usa-accordion__content.lego-accordion")
+                .show();
+              parentAccordionGroup
+                .find(".usa-accordion__button.lego-accordion")
+                .attr("aria-expanded", "true")
+                .parent()
+                .next()
+                .addClass("active");
+            });
+          $(el)
+            .find("a.usa-accordion-collapse-all")
+            // eslint-disable-next-line max-nested-callbacks
+            .click((event) => {
+              event.preventDefault();
+              const parentAccordionGroup = $(event.target).parent().parent();
+
+              $(this)
+                .parent()
+                .find("a.usa-accordion-expandall")
+                .removeClass("active");
+
+              // Close all accordion content at once
+              parentAccordionGroup
+                .find(".usa-accordion__content.lego-accordion")
+                .hide();
+              parentAccordionGroup
+                .find(".usa-accordion__button.lego-accordion")
+                .attr("aria-expanded", "false")
+                .parent()
+                .next()
+                .removeClass("active");
+
+              return false;
+            });
+        });
+
+        // PROCESS BACKGROUND IMAGES FOR ACCORDIONS
+        $(".accordion-group.has-bg-image").each((i, el) => {
+          const imageUrl = $(el)
+            .find("div.accordion-background-image-filepath")
+            .html();
+          $(el)
+            .find("div.usa-accordion__content")
+            // eslint-disable-next-line max-nested-callbacks
+            .each((index, element) => {
+              $(element).css("background-image", `url("${imageUrl}")`);
+            });
+        });
+
+        // END SINGLE RUN CODE
+      })
+      );
+
+      // If the form is submitted using AJAX, the entire page might not reload,
+      // causing the attached once to not be triggered. You need to manually
+      // re-attach the behavior after the form submission is successful.
+
+      $(".view-faq-solr .usa-accordion-expandall").click((e) => {
+        e.preventDefault();
+        $(".view-faq-solr .usa-accordion__button").attr("aria-expanded", "true");
+        $(".view-faq-solr .usa-accordion__content").removeAttr("hidden");
+      });
+
+      $(".view-faq-solr .usa-accordion-collapse-all").click((e) => {
+        e.preventDefault();
+        $(".view-faq-solr .usa-accordion__button").attr("aria-expanded", "false");
+        $(".view-faq-solr .usa-accordion__content").attr("hidden", "hidden");
+      });
+    },
+  };
+})(Drupal, jQuery, once);

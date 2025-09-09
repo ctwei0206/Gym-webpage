@@ -1,0 +1,66 @@
+(function (Drupal, $, once) {
+  Drupal.behaviors.samhsaLbMenublockTitle = {
+    attach(context) {
+      /**
+       * We only run this code once on the initial page lood.
+       * Note that this is the new way of doing this. As of Drupal 9.3, the jquery.once library has been removed from core. Backwards compatibility has been engineered in, but eventually it"ll be deprecated and removed, so from this point on, we should adopt the new way of doing this.
+       * https://www.drupal.org/node/3158256
+       *
+       * Note not just the "once" first line of code below, but the "once" declarations at the start and end of this script.
+       *
+       * In this first block of code we pull in the data passed from the backend, pass it to the buildJsonLd function where most of the magic happens, then we embed the results into the head of the page.
+       */
+
+      // THIS FILE IS BEING LOADED GLOBALLY FROM THE samhsa_uswds_base.libraries.yml FILE.
+
+      // This block of code will populate the link text attribute field, if it is empty, with the value of the required block title field
+      // It only runs in the Layout Builder Menu Block modal.
+      // The code goes here because AJAX driven modals will not fire the code in the "Once" handler below.
+      $(window).on('dialog:aftercreate', function () {
+        if ($('form.lb-menu-block-modal').length) {
+          const blockTitleText = $('.side-menu.block-menu.menu--menu-blockglobal-menu h2').text() ? $('.side-menu.block-menu.menu--menu-blockglobal-menu h2').text() : $('.side-menu.block-menu.menu--menu-blockmain h2').text();
+          const linkTitleAttrField = $('form.lb-menu-block-modal .js-form-item-samhsa-lb-menublock-title-title-link-title input');
+          linkTitleAttrField.on('focus', function () {
+            if (!$(this).val()) {
+              $(this).val(blockTitleText);
+            }
+          });
+        }
+      });
+
+      $(once("samhsaLbMenublockTitle", "html", context).forEach(() => {
+        // START CODE
+        let titleLink;
+
+        // Manage the display in the public page
+        if ( $('.side-menu.block-menu.menu--menu-blockglobal-menu h2').length === 1 ) {
+          titleLink = $('.side-menu.block-menu.menu--menu-blockglobal-menu h2');
+        } else {
+          titleLink = $('.side-menu.block-menu.menu--menu-blockmain h2');
+        }
+        let url;
+
+        // Don't run this code in the admin screen
+        if (!$('form.layout-builder-form').length) {
+          if (titleLink.text()) {
+            url = drupalSettings.samhsa_lb_menublock_title?.url ? drupalSettings.samhsa_lb_menublock_title.url : '';
+
+            if (url) {
+              let attributes = [
+                drupalSettings.samhsa_lb_menublock_title.title ? 'title="' + drupalSettings.samhsa_lb_menublock_title.title + '"' : '', drupalSettings.samhsa_lb_menublock_title.target ? 'target="' + drupalSettings.samhsa_lb_menublock_title.target + '"' : '',
+              ];
+
+              titleLink.wrapInner('<a href="' + url + '"' + attributes.join(" ") + '></a>');
+            }
+          } else {
+            titleLink.remove();
+          }
+        }
+
+
+        // END CODE
+      }));
+    },
+  };
+}(Drupal, jQuery, once));
+

@@ -1,0 +1,135 @@
+((Drupal, $, once) => {
+  Drupal.behaviors.mobileMenu = {
+    attach(context) {
+      $(
+        once('mobileMenu', 'html', context).forEach(() => {
+          new Mmenu( "#mobile-menu", {
+            'theme': 'white',
+            'dragOpen': false,
+            'slidingSubmenus': true,
+            'extensions': [
+              'pagedim-black', 'fx-menu-slide', 'pageshadow', 'effect-zoom-menu', 'effect-zoom-panels',
+            ],
+            "pageScroll": {
+              "scroll": true,
+              "update": true,
+            },
+            'offCanvas': {
+              'position': 'right-front',
+              'clone': true,
+              'screenReader': {
+                'closeMenu': 'Close menu',
+                'openMenu': 'Open menu',
+                'toggleSubmenu': 'Toggle submenu',
+                'aria': true,
+                'text': true,
+              },
+            },
+            'navbars': [
+              {
+                'position': 'top',
+                'use': true,
+                'content': [
+                  'prev', 'title', 'close',
+                ],
+              },
+            ],
+            'navbar': {
+              'add': true,
+              'title': '<a href="/">Home</a>',
+              'titleLink': 'parent',
+            },
+            'classNames': {
+              'selected': 'is-active',
+            },
+            'setSelected': {
+              'current': 'detect',
+              'hover': true,
+              'parent': true,
+            },
+            'keyboardNavigation' : {
+              'enable': true,
+              'enhance': true,
+            },
+            'onClick': {
+              'close': false,
+              'preventDefault': true,
+              'setSelected': true,
+            },
+          });
+
+          const activeTrailListItem = $('li.mm-listitem.menu-item--active-trail .is-active:last');
+          const activeTrailPanel = activeTrailListItem.parents('div.mm-panel');
+          const panelsWrapper = activeTrailPanel.parents('div.mm-panels');
+          const backArrow = panelsWrapper.siblings('.mm-navbars.mm-navbars--top').find('.mm-btn.mm-hidden');
+          const parentTitle = activeTrailPanel.find('.mm-navbar__title span');
+          const titleText = parentTitle.text();
+          const backId = activeTrailPanel.find('a.mm-btn.mm-btn--prev.mm-navbar__btn').attr('href');
+          const titleSpan = $('<span>').text(titleText);
+                
+          if (activeTrailListItem.length > 0) {
+            
+              $(".mm-btn--close").click( ()=> { 
+                $("div.mm-panel").removeClass("mm-panel--opened"); 
+                $("li.mm-listitem").removeClass("mm-listitem--selected-parent"); 
+                $("li.mm-listitem.menu-item--active-trail .is-active:last").parents("div.mm-panel").addClass("mm-panel--opened").removeAttr("inert").removeClass("mm-panel--parent"); 
+                 backArrow.addClass("mm-btn--prev mm-navbar__btn").removeClass("mm-hidden").attr("href", "").attr("aria-label", "Close submenu");
+                $(".mm-navbars--top .mm-navbar__title").empty().append(titleSpan).addClass("title");
+              });
+
+              $("#mobile-menu-btn").click( ()=> {
+                $(".mm-navbar__title").each((i, el)=> { 
+                  $(el).attr("href", `${$(".mm-listitem__text:contains('"+$(el).find('span').text()+"')").attr("href")}`);  
+                  if ($(el).find("span").text() === "Home") {
+                    $(el).prev(".mm-navbar__btn").addClass("mm-hidden");
+                    $(el).attr("href", "/");
+                  } else {
+                    $(el).prev(".mm-navbar__btn").removeClass("mm-hidden");
+                    $(".mm-navbars.mm-navbars--top .mm-navbar .mm-btn--prev").removeClass("mm-hidden").attr("href", `${backId}`).attr("aria-label", "Close submenu");
+                  }
+                });
+              });
+           
+              // Update title
+              $('.mm-navbars--top .mm-navbar__title').empty().append(titleSpan).addClass('title');
+
+              activeTrailPanel.addClass('mm-panel--opened').removeAttr('inert');
+              const activePanel = activeTrailPanel.addClass('mm-panel--opened').removeAttr('inert');
+              
+              // Handle backArrow
+              backArrow.addClass('mm-btn--prev mm-navbar__btn')
+                .removeClass('mm-hidden')
+                .attr('href', `${backId}`)
+                .attr('aria-label', 'Close submenu');
+
+              // Handle panels
+              activePanel.siblings(`div.mm-panel.mm-panel--opened[id='${backId}']`)
+                  .addClass('mm-panel--parent')
+                  .removeClass('mm-panel--opened')
+                  .attr('inert', 'true');
+
+              const firstPanel = $('.mm-panels .mm-panel:first');
+              if (firstPanel.is(activePanel)) {
+                firstPanel.addClass('mm-panel--opened');
+                firstPanel.parents('.mm-panels')
+                  .siblings('.mm-navbars.mm-navbars--top')
+                  .find('.mm-btn--prev.mm-navbar__btn')
+                  .addClass('mm-hidden'); 
+              } else {
+                firstPanel.removeClass('mm-panel--opened');
+              }
+          } 
+
+          /*
+            $(document).ready(() => {
+              $(".mm-navbar__title:not(:has('span a'))").each((i, el)=> { 
+                $(el).attr("href", `${$(".mm-listitem__text:contains("+$(el).find('span').text()+")").attr("href")}`);  
+              });
+            });
+          */ 
+            // END SINGLE RUN CODE
+          })
+      );
+    },
+  };
+})(Drupal, jQuery, once);
