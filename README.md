@@ -24,3 +24,6 @@ A simple interactive fitness web application that helps users manage workouts, t
 
 
 ---
+
+## ❓ How to open?
+ Click this link 👉 https://ctwei0206.github.io/Gym-webpage/
