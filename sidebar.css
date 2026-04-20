@@ -1,0 +1,92 @@
+/* General Styles */
+#sidebar {
+  background-color: #555; 
+  border-radius: 20px; 
+  padding: 10px; 
+  position: fixed; /* Sticks to the viewport */
+  right: 0; /* Aligns with the right edge */
+  height: 100%; 
+  width: 30%; 
+  display: flex; /* Centering content horizontally */
+  align-items: center; /* Centering content vertically */
+  justify-content: center; /* Centering content horizontally */
+  overflow: auto; /* Ensure content does not overflow */
+}
+
+#timer {
+  background-color: rgb(43, 39, 39);
+  padding: 10px; 
+  color: lightblue; 
+  width: 100%; /* Full width of the container */
+}
+
+#timerDisplayer {
+  display: grid; 
+  grid-template-columns: repeat(4, auto); /* 4 columns for hours, minutes, seconds, and separators */
+  gap: 5px; /* Space between items */
+  padding: 10px; 
+  background-color: black; 
+  margin: 10px; 
+  color: #fff; /* Text color for contrast */
+  font-family: 'Digital-7', sans-serif; /* Use a digital clock font */
+  font-size: 2em; /* Adjust size as needed */
+  text-align: center; /* Center text within grid items */
+}
+
+#timerDisplayer div { 
+  background-color: #333; /* Background color for each timer segment */
+  border-radius: 5px; /* Rounded corners for segments */
+  padding: 10px; /* Space around the text */
+}
+
+#timerDisplayer .separator {
+  font-size: 1.5em; /* Smaller font size for separators */
+  color: #888; /* Color for separators */
+}
+
+/* Responsive Design */
+@media (min-width: 769px) {
+  /* For larger screens (e.g., desktops) */
+  #sidebar {
+      width: 30%; /* Sidebar width */
+  }
+  
+  .container {
+      display: flex; /* Flex layout for container */
+      margin-right: 30%; /* Adjust margin to make space for sidebar */
+  }
+
+  .container > * {
+      flex: 1; /* Allow children to take available space */
+  }
+}
+
+@media (max-width: 768px) {
+  /* For medium screens (e.g., tablets) */
+  #sidebar {
+      width: 100%; /* Full width for sidebar */
+      height: auto; /* Adjust height */
+      position: relative; /* Adjust position */
+  }
+
+  .container {
+      display: block; /* Stack elements vertically */
+      margin-right: 0; /* No margin needed */
+  }
+}
+
+@media (max-width: 480px) {
+  /* For smaller screens (e.g., mobile phones) */
+  #timerDisplayer {
+      grid-template-columns: repeat(2, 1fr); /* 2 columns on very small screens */
+      font-size: 1.2em; /* Adjust font size */
+  }
+
+  #timerDisplayer div {
+      padding: 5px; /* Reduced padding */
+  }
+
+  #timerDisplayer .separator {
+      font-size: 1em; /* Further reduced font size */
+  }
+}

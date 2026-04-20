@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Workout To Do List</title>
+  <link rel="stylesheet" href="pagestyle_todolist.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="sidebar.css" />
+  <style>
+    body { background-color: rgb(43, 39, 39); }
+    #todayDate {
+      word-spacing: 20px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    #duration-form-head {
+      font-size: 16px;
+      word-spacing: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div id="myDIV" class="header">
+    <div class="header-content">
+      <h2>Workout To Do List</h2>
+    </div>
+    <p id="todayDate"></p>
+    <div id="InputDiv" style="display:flex">
+      <input type="text" id="myInput" placeholder="Your Workout" />
+      <span id="addTaskButton" class="btn">Add</span>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="modal fade" id="getDuration" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title" id="duration-form-head"></h4>
+          </div>
+          <div class="modal-body">
+            <label for="hours">Hours:</label>
+            <input type="number" id="hours" name="hours" min="0" max="11" placeholder="HH" required />
+            <label for="minutes">Minutes:</label>
+            <input type="number" id="minutes" name="minutes" min="0" max="59" placeholder="MM" required />
+            <label for="seconds">Seconds:</label>
+            <input type="number" id="seconds" name="seconds" min="0" max="59" placeholder="SS" required />
+            <button type="button" class="btn btn-default" id="durationFormButton" data-dismiss="modal">Submit</button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="workspace">
+    <ul id="myUL"></ul>
+    <div id="sidebar">
+      <div id="timer">
+        <h1 style="font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">Time remaining</h1>
+        <div id="timerDisplayer">
+          <div id="hoursDisplay" class="grid-item">00</div>
+          <div id="minutesDisplay" class="grid-item">00</div>
+          <div id="secondsDisplay" class="grid-item">00</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="suggestionDiv" class="header">
+    <input type="text" id="suggestion" class="input" placeholder="Enter your query here" />
+    <button id="SuggestButton" class="btn">Get suggestions</button>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "@google/generative-ai": "https://esm.run/@google/generative-ai"
+    }
+  }
+  </script>
+
+  <script>
+    const taskList = new Map();
+    const list = document.querySelector('ul');
+
+    let timerInterval = null;
+    let timerDisplaying = false;
+    const secsPara = document.getElementById('secondsDisplay');
+    const minsPara = document.getElementById('minutesDisplay');
+    const hoursPara = document.getElementById('hoursDisplay');
+
+    let selectedTaskId = null;
+
+    function ordinalSuffix(day) {
+      if (day >= 11 && day <= 13) return 'th';
+      switch (day % 10) {
+        case 1: return 'st';
+        case 2: return 'nd';
+        case 3: return 'rd';
+        default: return 'th';
+      }
+    }
+
+    function setTodayDate() {
+      const today = new Date();
+      const options = { day: 'numeric', month: 'long', year: 'numeric', weekday: 'long' };
+      const formattedDate = today.toLocaleDateString('en-GB', options);
+      const day = today.getDate();
+      document.getElementById('todayDate').innerHTML = formattedDate.replace(/(\d{1,2})/, `$1${ordinalSuffix(day)}`);
+    }
+
+    function isNullTimer() {
+      return !timerInterval;
+    }
+
+    function formatTime(value) {
+      return value < 10 ? `0${value}` : `${value}`;
+    }
+
+    function displayTaskDuration(totalSecs) {
+      if (!timerDisplaying) {
+        secsPara.innerHTML = formatTime(totalSecs % 60);
+        minsPara.innerHTML = formatTime(Math.floor((totalSecs % 3600) / 60));
+        hoursPara.innerHTML = formatTime(Math.floor(totalSecs / 3600));
+        return true;
+      }
+      return false;
+    }
+
+    function clearTimerDisplay() {
+      secsPara.innerHTML = '00';
+      minsPara.innerHTML = '00';
+      hoursPara.innerHTML = '00';
+      timerDisplaying = false;
+    }
+
+    function countdownFromTime(seconds) {
+      if (!Number.isFinite(seconds) || seconds <= 0) {
+        console.error('Invalid countdown time.');
+        return;
+      }
+
+      let remainingSeconds = seconds;
+      timerDisplaying = true;
+
+      if (timerInterval) clearInterval(timerInterval);
+
+      timerInterval = setInterval(() => {
+        if (remainingSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          clearTimerDisplay();
+          return;
+        }
+
+        remainingSeconds -= 1;
+        const secs = remainingSeconds % 60;
+        const mins = Math.floor(remainingSeconds / 60) % 60;
+        const hrs = Math.floor(remainingSeconds / 3600);
+
+        secsPara.innerHTML = formatTime(secs);
+        minsPara.innerHTML = formatTime(mins);
+        hoursPara.innerHTML = formatTime(hrs);
+      }, 1000);
+    }
+
+    function pauseCountdown() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function resumeCountdown() {
+      const seconds = parseInt(secsPara.innerHTML, 10) || 0;
+      const minutes = parseInt(minsPara.innerHTML, 10) || 0;
+      const hours = parseInt(hoursPara.innerHTML, 10) || 0;
+      const remainingSeconds = seconds + minutes * 60 + hours * 3600;
+      if (remainingSeconds > 0) countdownFromTime(remainingSeconds);
+    }
+
+    function stopCountdown() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      clearTimerDisplay();
+    }
+
+    function displayTaskInfoOnForm(taskId) {
+      const tInfo = taskList.get(taskId);
+      if (!tInfo) {
+        console.error('Task information not found for task_id:', taskId);
+        return;
+      }
+
+      document.getElementById('duration-form-head').innerHTML = `How long would you like to perform: ${tInfo.name}?`;
+
+      const duration = tInfo.duration || 0;
+      document.getElementById('hours').value = Math.floor(duration / 3600);
+      document.getElementById('minutes').value = Math.floor((duration % 3600) / 60);
+      document.getElementById('seconds').value = duration % 60;
+      selectedTaskId = taskId;
+    }
+
+    document.getElementById('durationFormButton').addEventListener('click', () => {
+      if (selectedTaskId === null) return;
+      const task = taskList.get(selectedTaskId);
+      if (!task) return;
+
+      const seconds = parseInt(document.getElementById('seconds').value, 10) || 0;
+      const minutes = parseInt(document.getElementById('minutes').value, 10) || 0;
+      const hours = parseInt(document.getElementById('hours').value, 10) || 0;
+      task.duration = seconds + minutes * 60 + hours * 3600;
+    });
+
+    function getTaskDuration(taskId) {
+      displayTaskInfoOnForm(taskId);
+      $('#getDuration').modal('show');
+    }
+
+    function editItem(element, taskId) {
+      const currentText = element.childNodes[0].nodeValue;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.value = currentText;
+      input.className = 'form-control';
+
+      const displayText = element.childNodes[0];
+      element.replaceChild(input, displayText);
+      input.focus();
+
+      input.addEventListener('blur', () => {
+        displayText.nodeValue = input.value;
+        element.replaceChild(displayText, input);
+        const task = taskList.get(taskId);
+        if (task) task.name = input.value;
+      });
+
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          displayText.nodeValue = input.value;
+          element.replaceChild(displayText, input);
+          const task = taskList.get(taskId);
+          if (task) task.name = input.value;
+        }
+      });
+    }
+
+    function addIconToListBar(li) {
+      const iconDiv = document.createElement('div');
+      iconDiv.className = 'iconDiv';
+
+      const iconTimer = document.createElement('img');
+      iconTimer.src = 'timer-icon.png';
+      iconTimer.className = 'icon';
+      iconTimer.addEventListener('click', (event) => {
+        event.stopPropagation();
+        getTaskDuration(li.id);
+      });
+      iconDiv.appendChild(iconTimer);
+
+      const pauseIcon = document.createElement('img');
+      pauseIcon.src = 'play.png';
+      pauseIcon.className = 'icon';
+      pauseIcon.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const task = taskList.get(li.id);
+        if (!task) return;
+
+        if (task.paused === true) {
+          pauseIcon.src = 'pause.png';
+          if (task.initiated === false) {
+            countdownFromTime(task.duration);
+            task.initiated = true;
+          } else {
+            resumeCountdown();
+          }
+          task.paused = false;
+        } else {
+          pauseIcon.src = 'play.png';
+          task.paused = true;
+          pauseCountdown();
+        }
+      });
+      iconDiv.appendChild(pauseIcon);
+
+      const stopIcon = document.createElement('img');
+      stopIcon.src = 'https://static.vecteezy.com/system/resources/previews/021/868/700/original/stop-button-icon-web-icon-used-for-videos-and-music-vector.jpg';
+      stopIcon.className = 'icon';
+      stopIcon.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const task = taskList.get(li.id);
+        if (task) {
+          task.initiated = false;
+          task.paused = true;
+        }
+        stopCountdown();
+      });
+      iconDiv.appendChild(stopIcon);
+
+      li.appendChild(iconDiv);
+    }
+
+    function newElement() {
+      const li = document.createElement('li');
+      const inputValue = document.getElementById('myInput').value.trim();
+
+      if (!inputValue) {
+        alert('You must write something!');
+        return;
+      }
+
+      const taskName = document.createTextNode(inputValue);
+      li.appendChild(taskName);
+
+      const spanClose = document.createElement('span');
+      spanClose.className = 'close';
+      spanClose.appendChild(document.createTextNode('\u00D7'));
+      li.appendChild(spanClose);
+
+      li.id = String(taskList.size);
+      li.tabIndex = 0;
+      document.getElementById('myUL').appendChild(li);
+      document.getElementById('myInput').value = '';
+
+      spanClose.addEventListener('click', function () {
+        const row = this.parentElement;
+        row.style.display = 'none';
+        stopCountdown();
+        taskList.delete(row.id);
+      });
+
+      addIconToListBar(li);
+
+      const taskInfo = {
+        name: inputValue,
+        duration: 900,
+        paused: true,
+        initiated: false,
+        dateCreated: new Date()
+      };
+
+      li.addEventListener('click', (event) => {
+        li.focus();
+        if (isNullTimer()) {
+          if (!displayTaskDuration(taskInfo.duration)) {
+            clearTimerDisplay();
+          }
+        }
+        event.stopPropagation();
+      });
+
+      li.addEventListener('blur', (event) => {
+        clearTimerDisplay();
+        event.stopPropagation();
+      });
+
+      li.addEventListener('dblclick', (event) => {
+        event.stopPropagation();
+        editItem(li, li.id);
+      });
+
+      taskList.set(li.id, taskInfo);
+    }
+
+    document.getElementById('addTaskButton').addEventListener('click', newElement);
+    document.getElementById('myInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') newElement();
+    });
+
+    setTodayDate();
+    window.newElement = newElement;
+  </script>
+
+  <script type="module">
+    import { GoogleGenerativeAI } from '@google/generative-ai';
+
+    // NOTE: Don't hardcode secrets in source for production usage.
+    const API_KEY = '';
+    const suggestButton = document.getElementById('SuggestButton');
+
+    async function run(prompt) {
+      if (!API_KEY) {
+        console.warn('Missing API key. Suggestions are disabled.');
+        return;
+      }
+
+      const genAI = new GoogleGenerativeAI(API_KEY);
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const fullPrompt = `${prompt}\nGive it in csv form: workout,duration. No introductions.`;
+      const result = await model.generateContent(fullPrompt);
+      const response = await result.response;
+      const text = response.text();
+      console.log(text);
+    }
+
+    suggestButton.addEventListener('click', async () => {
+      const prompt = document.getElementById('suggestion').value;
+      await run(prompt);
+    });
+  </script>
+</body>
+</html>

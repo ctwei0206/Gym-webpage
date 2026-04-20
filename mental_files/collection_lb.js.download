@@ -1,0 +1,35 @@
+((Drupal, $, once) => {
+  Drupal.behaviors.collectionComponent = {
+    attach(context) {
+      $(
+        once("collectionComponent", "html", context).forEach(() => {
+          // Fixes alignment on load and resize
+          $(window).on("load resize", function () {
+            // Gets window width
+            let windowWidth = $(window).width();
+
+            // If window is bigger than expected breakpoint, change alignment based on collection offset
+            if (windowWidth > 880) {
+              // eslint-disable-next-line max-nested-callbacks
+              $(".desktop\\:grid-col-6.samhsa-collection--container").each(function (index, element) {
+                // Checks if collection is on first or second half of page
+                if ($(element).offset().left < windowWidth / 2) {
+                  $(element).css('padding-left', '0.5rem');
+                  $(element).css('padding-right', '2.5rem');
+                } else {
+                  $(element).css('padding-right', '0.75rem');
+                }
+              });
+            } else {
+              // Reset if on mobile
+              $(".samhsa-collection--container").css('padding-right', '0.75rem');
+              $(".samhsa-collection--container").css('padding-left', '0.75rem');
+            }
+          });
+
+          $("ul.usa-collection .field--name-field-cpnt-collection-ref-rev").attr("role", "listitem");
+        })
+      );
+    },
+  };
+})(Drupal, jQuery, once);

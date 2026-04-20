@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Stretching and Flexibility Zone
+        </title>
+        <style>
+            body 
+            {
+                margin: 0;
+                background-image: url('subbackground.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                color: white;
+                font-family: 'Kanit', Arial;
+                min-height: 100vh; /* Ensure the body is at least the height of the viewport */
+                position: relative; /* Added to make ::before relative to body */
+            }
+            body::before 
+            {
+                content: '';
+                position: fixed; /* Change from absolute to fixed */
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+                z-index: 1;
+                pointer-events: none; /* Ensure the overlay does not block interactions */
+            }
+
+            .content 
+            {
+                position: relative;
+                z-index: 2; /* Ensures content is above the overlay */
+                color: white;
+                padding: 20px;
+            }
+            .title
+            {
+                text-align: center;
+                font-size: 50px;
+            }
+            .description
+            {
+                text-align: center;
+                font-size: 20px;
+            }
+            img
+            {
+                cursor: pointer;
+                border-style: solid;
+                border-color: rgb(50, 51, 53);
+                border-width: 20px;
+                width:100%;
+                max-width: 200px;
+                height:300px;
+                object-fit: contain;
+                margin: 10px;
+                transition: height 0.3s, background-color 0.3s;
+                background-color: rgb(50, 51, 53);
+            }
+            img:active
+            {
+                height:300px;
+                
+            }
+            img:hover
+            {
+                background-color: white;
+                
+            }
+            
+            .image-block
+            {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                
+            }
+            
+            .equipment-name
+            {
+                margin-top: 20px;
+                text-align: center;
+            }
+            #name
+            {
+                font-size:30px;
+                font-weight: bold;
+                
+            }
+            #details
+            {
+                font-size: 23px;
+            }
+            .subdescription
+            {
+                font-size:30px;
+                font-weight: bold;
+            }
+            strong
+            {
+                color:aqua;
+            }
+            .goback
+            {
+                color:white;
+                padding-left: 30px;
+                padding-bottom: 40px;
+                font-size: 25px;
+            }
+            .goback:hover
+            {
+                font-weight: bold;
+            }
+            .goback:active
+            {
+                font-weight: bold;
+                color:rgb(72, 110, 223);
+                transition: color 0.5s;
+            }
+            .bottom
+            {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            .backtotop
+            {
+                color:white;
+                margin-right: 20px;
+                font-size: 25px;
+            }
+            .backtotop:hover
+            {
+                font-weight: bold;
+            }
+            .backtotop:active
+            {
+                font-weight: bold;
+                color:rgb(72, 110, 223);
+                transition: color 0.5s;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="content">
+            <h1 class="title">
+                Stretching and Flexibility Zone
+            </h1>
+            <h2 class="description">
+                A quiet area dedicated to stretching, mobility exercises, and flexibility training.
+            <br>
+            <p class="description">
+                <span class="subdescription">Target Audience: </span>
+                <br>
+                Suitable for all members, especially those looking to <strong>improve flexibility</strong>, <strong>recover from workouts</strong>, or <strong>prevent injuries</strong>.
+            </p>
+            <br>
+            <hr>
+            
+            <div>
+                <h2>
+                    Equipments (click for more informations): 
+                </h2>
+                <div class="image-block">
+                    <img onclick="showName('Stretching Mats')" src="stretchingzone/stretchingmat.png">
+                    <img onclick="showName('Foam Rollers')" src="stretchingzone/foamroller.png">
+                    <img onclick="showName('Stretching Straps')" src="stretchingzone/stretchingstraps.png">
+                    <img onclick="showName('Balance Balls')" src="stretchingzone/balanceball.png">
+                    <br>
+                </div>
+                <div class="equipment-name">
+                    <label id="name" ></label>
+                    <p id="details"></p>
+                </div>
+                <script>
+                    function showName(name) 
+                    {
+                        document.getElementById("name").innerHTML = name;
+    
+                        if (name === 'Stretching Mats') 
+                        {
+                            document.getElementById("details").innerHTML = "Stretching mats provide a comfortable, cushioned surface for performing stretches, floor exercises, and yoga. They are designed to offer support and protection for joints during workouts, reducing the risk of injury. Stretching mats are typically thicker than standard yoga mats, providing extra padding for activities that involve more prolonged contact with the ground, such as stretching routines, Pilates, and core exercises. They are portable, easy to clean, and essential for creating a safe and comfortable workout environment, whether at home or in a gym.";
+                        } 
+                        else if(name === 'Foam Rollers')
+                        {
+                            document.getElementById("details").innerHTML = "Foam rollers are versatile tools used for self-myofascial release, helping to alleviate muscle tightness, improve flexibility, and enhance recovery. By rolling over various muscle groups, foam rollers apply pressure to trigger points, breaking up adhesions and knots in the muscles. This process helps increase blood flow, reduce soreness, and improve range of motion. Foam rollers are commonly used before or after workouts to prepare muscles for exercise or to aid in recovery. Available in different densities and sizes, they cater to varying levels of intensity and specific muscle needs.";
+                        }
+                        else if(name === 'Stretching Straps')
+                        {
+                            document.getElementById("details").innerHTML = "Stretching straps are tools designed to aid in stretching exercises, improving flexibility and range of motion. They help users perform stretches with proper technique and control, making it easier to reach and hold difficult positions. By allowing for gradual and controlled stretching, these straps can assist in deepening stretches and enhancing muscle elongation. Stretching straps often come with loops or handles for secure grip and adjustability, making them useful for both beginners and advanced practitioners. They are particularly beneficial for increasing flexibility, relieving muscle tension, and supporting rehabilitation exercises.";
+                        }
+                        else if(name === 'Balance Balls')
+                        {
+                            document.getElementById("details").innerHTML = "Balance balls, also known as stability balls or exercise balls, are versatile fitness tools used to improve core strength, stability, and balance. They can be incorporated into a wide range of exercises, from strength training to stretching and rehabilitation. By engaging the core muscles to maintain balance on the unstable surface of the ball, users enhance their overall muscle coordination and stability. Balance balls are also beneficial for improving posture, enhancing flexibility, and supporting a variety of functional movements. They are commonly used in both fitness routines and physical therapy.";
+                        }
+                        else 
+                        {
+                            document.getElementById("details").innerHTML = ""; // Clear the description for other equipment
+                        }
+
+                        document.querySelector('.equipment-name').scrollIntoView({ behavior: 'smooth' });
+                    }
+                </script>
+            </div>
+        </div>
+        <div class="bottom">
+            <a class="goback" href="explore.html">&#10558; Go back</a>
+            <a class="backtotop" href="#top">&#8593; Back to Top</a>
+        </div>
+    </body>
+</html>

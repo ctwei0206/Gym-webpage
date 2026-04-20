@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Personal Training Area
+        </title>
+        <style>
+            body 
+            {
+                margin: 0;
+                background-image: url('subbackground.png');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+                color: white;
+                font-family: 'Kanit', Arial;
+                min-height: 100vh; /* Ensure the body is at least the height of the viewport */
+                position: relative; /* Added to make ::before relative to body */
+            }
+            body::before 
+            {
+                content: '';
+                position: fixed; /* Change from absolute to fixed */
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+                z-index: 1;
+                pointer-events: none; /* Ensure the overlay does not block interactions */
+            }
+
+            .content 
+            {
+                position: relative;
+                z-index: 2; /* Ensures content is above the overlay */
+                color: white;
+                padding: 20px;
+            }
+            .title
+            {
+                text-align: center;
+                font-size: 50px;
+            }
+            .description
+            {
+                text-align: center;
+                font-size: 20px;
+            }
+            img
+            {
+                cursor: pointer;
+                border-style: solid;
+                border-color: rgb(50, 51, 53);
+                border-width: 20px;
+                width:100%;
+                max-width: 200px;
+                height:300px;
+                object-fit: contain;
+                margin: 10px;
+                transition: height 0.3s, background-color 0.3s;
+                background-color: rgb(50, 51, 53);
+            }
+            img:active
+            {
+                height:300px;
+                
+            }
+            img:hover
+            {
+                background-color: white;
+                
+            }
+            
+            .image-block
+            {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                
+            }
+            
+            .equipment-name
+            {
+                margin-top: 20px;
+                text-align: center;
+            }
+            #name
+            {
+                font-size:30px;
+                font-weight: bold;
+                
+            }
+            #details
+            {
+                font-size: 23px;
+            }
+            .subdescription
+            {
+                font-size:30px;
+                font-weight: bold;
+            }
+            strong
+            {
+                color:aqua;
+            }
+            .goback
+            {
+                color:white;
+                padding-left: 30px;
+                padding-bottom: 40px;
+                font-size: 25px;
+            }
+            .goback:hover
+            {
+                font-weight: bold;
+            }
+            .goback:active
+            {
+                font-weight: bold;
+                color:rgb(72, 110, 223);
+                transition: color 0.5s;
+            }
+            .bottom
+            {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+            }
+            .backtotop
+            {
+                color:white;
+                margin-right: 20px;
+                font-size: 25px;
+            }
+            .backtotop:hover
+            {
+                font-weight: bold;
+            }
+            .backtotop:active
+            {
+                font-weight: bold;
+                color:rgb(72, 110, 223);
+                transition: color 0.5s;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="content">
+            <h1 class="title">
+                Personal Training Area
+            </h1>
+            <h2 class="description">
+                A designated area for personal training sessions, where members can work one-on-one with certified trainers.
+            <br>
+            <p class="description">
+                <span class="subdescription">Target Audience: </span>
+                <br>
+                Ideal for members seeking <strong>customized workout plans</strong> and <strong>personalized guidance</strong>.
+            </p>
+            <br>
+            <hr>
+            
+            <div>
+                <h2>
+                    Equipments (click for more informations): 
+                </h2>
+                <div class="image-block">
+                    <img onclick="showName('Mix of Free Weights')" src="personaltraining/freeweight.png">
+                    <img onclick="showName('Strength Machines')" src="personaltraining/strengthmachine.png">
+                    <img onclick="showName('Roll Recovery R8+')" src="personaltraining/rollrecovery.png">
+                    <img onclick="showName('Aletha Health Knuckle')" src="personaltraining/aletha.png">
+                    <img onclick="showName('Resistance Bands')" src="personaltraining/resistanceband.png">
+                    <br>
+                </div>
+                <div class="equipment-name">
+                    <label id="name" ></label>
+                    <p id="details"></p>
+                </div>
+                <script>
+                    function showName(name) 
+                    {
+                        document.getElementById("name").innerHTML = name;
+    
+                        if (name === 'Mix of Free Weights') 
+                        {
+                            document.getElementById("details").innerHTML = "A mix of free weights, including dumbbells, barbells, and kettlebells, offers a versatile range of strength training options. Free weights allow for a wide variety of exercises that target different muscle groups, enhancing strength, muscle tone, and balance. They promote functional fitness by mimicking natural movements and improving coordination. Free weights also enable users to perform compound exercises that engage multiple muscles simultaneously, contributing to overall muscle development and increased stability. Suitable for all fitness levels, free weights are essential for building strength, power, and endurance in a customizable and effective way.";
+                        } 
+                        else if(name === 'Strength Machines')
+                        {
+                            document.getElementById("details").innerHTML = "Strength machines are designed to target specific muscle groups through controlled, guided movements, making them ideal for building muscle strength and size. These machines provide stability and support, reducing the risk of injury and allowing users to focus on proper form. They are particularly beneficial for beginners, as they guide the motion and help isolate muscles effectively. Strength machines also allow for progressive resistance, enabling users to gradually increase the weight as they build strength. Commonly found in gyms, they are key tools for structured, safe, and efficient strength training workouts.";
+                        }
+                        else if(name === 'Roll Recovery R8+')
+                        {
+                            document.getElementById("details").innerHTML = "The Roll Recovery R8+ is an advanced deep tissue massage tool designed to aid in muscle recovery and injury prevention. It features adjustable resistance and ergonomic design, allowing users to customize the intensity of their massage based on their needs. The R8+ targets muscles in the legs, arms, and other areas to reduce muscle soreness, improve blood circulation, and enhance overall flexibility. It's particularly popular among athletes for its ability to provide effective self-massage, aiding in faster recovery after intense workouts. The compact design makes it easy to use at home or on the go.";
+                        }
+                        else if(name === 'Aletha Health Knuckle')
+                        {
+                            document.getElementById("details").innerHTML = "The Aletha Health Knuckle is a specialized massage tool designed to release tight muscles and trigger points, particularly in hard-to-reach areas. Its ergonomic design mimics the shape and pressure of a therapist's knuckles, allowing for deep tissue massage that helps alleviate muscle tension, reduce pain, and improve flexibility. This tool is especially useful for targeting areas like the neck, shoulders, and back, where knots and tightness often occur. It's a compact and portable solution for those seeking effective self-massage and muscle recovery techniques.";
+                        }
+                        else if(name === 'Resistance Bands')
+                        {
+                            document.getElementById("details").innerHTML = "Resistance bands are flexible, elastic bands used to add resistance to various exercises, making them effective for building strength, improving flexibility, and enhancing muscle tone. They come in different levels of resistance, allowing users to customize the intensity of their workouts. Resistance bands are versatile and can be used for a wide range of exercises, including strength training, stretching, and rehabilitation. They are portable, easy to use, and suitable for all fitness levels, making them a popular choice for home workouts, gym routines, and physical therapy.";
+                        }
+                        else 
+                        {
+                            document.getElementById("details").innerHTML = ""; // Clear the description for other equipment
+                        }
+
+                        document.querySelector('.equipment-name').scrollIntoView({ behavior: 'smooth' });
+                    }
+                </script>
+            </div>
+        </div>
+        <div class="bottom">
+            <a class="goback" href="explore.html">&#10558; Go back</a>
+            <a class="backtotop" href="#top">&#8593; Back to Top</a>
+        </div>
+    </body>
+</html>

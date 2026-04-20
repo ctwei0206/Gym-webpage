@@ -1,0 +1,35 @@
+<html>
+<body>
+  <!-- ... Your HTML and CSS -->
+  <!-- Import @google/generative-ai, as shown above. -->
+  <script type="importmap">
+    {
+      "imports": {
+        "@google/generative-ai": "https://esm.run/@google/generative-ai"
+      }
+    }
+  </script>
+  <script type="module">
+      import { GoogleGenerativeAI } from "@google/generative-ai";
+
+      // Fetch your API_KEY
+      const API_KEY = "AIzaSyCge9wv2e39BWjI4-cX22Fs4coXg1Yv24U";
+
+      // Access your API key (see "Set up your API key" above)
+      const genAI = new GoogleGenerativeAI(API_KEY);
+
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+
+      async function run() {
+      const prompt = "Write a story about an AI and magic"
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+      document.write(text); 
+   }
+
+      run();
+  </script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+body{
+    margin:0;
+    font-family:'Kanit', Arial;
+    color:white;
+    background:url('BodyFitTraining.jpg') center/cover no-repeat fixed;
+}
+
+/* DARK OVERLAY */
+body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+    z-index:1;
+    pointer-events:none;
+}
+
+.content{
+    position:relative;
+    z-index:2;
+    padding:40px 10%;
+}
+
+/* TITLES */
+.title1{
+    font-size:52px;
+    margin-bottom:10px;
+}
+
+.title2{
+    font-size:32px;
+    color:#44f58e;
+    margin-top:40px;
+}
+
+.subtitle{
+    display:flex;
+    gap:20px;
+    margin:20px 0;
+    padding:20px;
+    border-radius:12px;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.15);
+}
+
+.overview{
+    flex:1;
+    font-size:18px;
+    line-height:1.6;
+    color:#78f1fa;
+}
+
+/* GRID FOR WORKOUTS */
+.wehave{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px,1fr));
+    gap:20px;
+    margin-top:20px;
+}
+
+.subwehave{
+    padding:15px;
+    border-radius:15px;
+    background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.15);
+    text-align:center;
+    transition:0.3s;
+}
+
+.subwehave:hover{
+    transform:translateY(-5px);
+}
+
+/* WORKOUT ITEMS */
+.area-container{
+    margin:10px 0;
+}
+
+.test{
+    margin-bottom:5px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.test:hover{
+    font-weight:bold;
+    color:#fbff00e5;
+    transform:scale(1.05);
+}
+
+/* IMAGE ANIMATION */
+.image-container{
+    height:0;
+    overflow:hidden;
+    transition:0.4s ease;
+}
+
+.area-container:hover .image-container{
+    height:180px;
+}
+
+.image{
+    width:100%;
+    border-radius:10px;
+    object-fit:cover;
+}
+
+/* LINKS */
+a{
+    color:white;
+    text-decoration:none;
+}
+
+.goforward, .goback{
+    display:inline-block;
+    font-size:22px;
+    margin-top:30px;
+    transition:0.3s;
+}
+
+.goforward:hover,
+.goback:hover{
+    color:#44f58e;
+    transform:translateX(5px);
+    font-weight:bold;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+    .content{padding:20px;}
+    .subtitle{flex-direction:column;}
+    .title1{font-size:34px;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="content">
+
+<h1 class="title1">Things About This Gym</h1>
+<hr>
+
+<h2 class="title2">Why We Need to Work Out</h2>
+
+<div class="subtitle">
+    <div class="overview">
+        Exercise improves heart health, reduces disease risk, boosts metabolism, and enhances mental wellbeing. Regular physical activity strengthens muscles and improves overall quality of life.
+    </div>
+</div>
+
+<h2 class="title2">General Categories of Gym Workouts</h2>
+
+<div class="subtitle">
+    <b>Cardio</b>
+    <div class="overview">Improves heart rate and burns calories efficiently.</div>
+</div>
+
+<div class="subtitle">
+    <b>Weight Training</b>
+    <div class="overview">Builds muscle strength using resistance and weights.</div>
+</div>
+
+<div class="subtitle">
+    <b>Functional Training</b>
+    <div class="overview">Trains real-life movement patterns and improves mobility.</div>
+</div>
+
+<div class="subtitle">
+    <b>Stretching & Flexibility</b>
+    <div class="overview">Improves flexibility, posture, and reduces injury risk.</div>
+</div>
+
+<h2 class="title2">Recommended Workouts</h2>
+
+<div class="wehave">
+
+<!-- CARDIO -->
+<div class="subwehave">
+<h3>Cardio</h3>
+
+<div class="area-container">
+<div class="test">Rowing Machine</div>
+<div class="image-container">
+<img class="image" src="cardioworkout/rowingmachine.webp">
+</div>
+</div>
+
+<div class="area-container">
+<div class="test">Step Mill</div>
+<div class="image-container">
+<img class="image" src="cardioworkout/stepmill.jpeg">
+</div>
+</div>
+
+</div>
+
+<!-- WEIGHT -->
+<div class="subwehave">
+<h3>Weight Training</h3>
+
+<div class="area-container">
+<div class="test">Chest Press</div>
+<div class="image-container">
+<img class="image" src="weighttraining/chestpress.avif">
+</div>
+</div>
+
+<div class="area-container">
+<div class="test">Leg Press</div>
+<div class="image-container">
+<img class="image" src="weighttraining/legpress.jpg">
+</div>
+</div>
+
+</div>
+
+<!-- FUNCTIONAL -->
+<div class="subwehave">
+<h3>Functional Training</h3>
+
+<div class="area-container">
+<div class="test">Body Squat</div>
+<div class="image-container">
+<img class="image" src="functionaltraining/bodyweightsquat.jpg">
+</div>
+</div>
+
+</div>
+
+<!-- STRETCHING -->
+<div class="subwehave">
+<h3>Stretching</h3>
+
+<div class="area-container">
+<div class="test">Cat-Cow Pose</div>
+<div class="image-container">
+<img class="image" src="stretchingandflex/cat-cowpose.png">
+</div>
+</div>
+
+</div>
+
+</div>
+
+<!-- NAV LINKS -->
+<p>
+<a class="goforward" href="extrainfo.html">THERE'S MORE →</a>
+</p>
+
+<p>
+<a class="goback" href="index.html">← Go back</a>
+</p>
+
+</div>
+
+</body>
+</html>
